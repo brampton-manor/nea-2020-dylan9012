@@ -1,9 +1,9 @@
 from tkinter import filedialog, messagebox
 from PIL import Image as cImage
 from sys import path as syspath
+from datetime import date
 from os import path
 import random
-import string
 import os
 
 syspath.insert(0, path.dirname(path.dirname(os.getcwd())))
@@ -87,22 +87,13 @@ def Initialising(image, coverImage, textHandle, var):
 
 def FileHandle(coverImage, var):
     Main.Display("Fetching image file directory...", var)
-    image = filedialog.asksaveasfilename(initialdir=path.dirname(os.getcwd()) + "/Output/Embed",
-                                         defaultextension="*.jpg",
-                                         title="Save image file",
-                                         filetypes=(("jpg files", "*.jpg"), ("all files", "*.*")))
-    if ExitApplication(image):
+    savePath = filedialog.asksaveasfilename(initialdir=path.dirname(os.getcwd()) + "/Output/Embed",
+                                            defaultextension="*.jpg",
+                                            title="Save image file",
+                                            filetypes=(("jpg files", "*.jpg"), ("all files", "*.*")))
+    if ExitApplication(savePath):
         FileHandle(coverImage, var)
-
-    coverImage.save(image, 'BMP')
-
-
-def TextTransformation(secretMsg, key):
-    ASCII = string.printable
-    random.seed(key)
-    shuffledASCII = "".join(random.sample(ASCII, len(ASCII)))
-    table = str.maketrans(ASCII, shuffledASCII)
-    return secretMsg.translate(table)
+    return savePath
 
 
 def Ordering(dimensions, key):
@@ -160,6 +151,12 @@ def ExitApplication(file):
             return True
 
 
+def WaterMark(message, savePath):
+    watermark = savePath[-3:].upper() + "/dylan/" + date.today().strftime("%Y-%m-%d")
+    index = random.randint(0, len(message))
+    return message[:index] + watermark + message[index:]
+
+
 def main(var):
     # - Optional configurations
     sigBit, plane = Config(var)
@@ -169,15 +166,16 @@ def main(var):
     coverImage, textHandle = Opening(message, image, var)
     # - Opening text
     message, dimensions, pixels = Initialising(image, coverImage, textHandle, var)
+    savePath = FileHandle(coverImage, var)
     # - Seeding
-    shuffledIndicies = Ordering(dimensions, key)
-    secretMsg = TextTransformation(message, key)
+    shuffledIndices = Ordering(dimensions, key)
+    message = WaterMark(message, savePath)
     # - Binary conversion
-    bits = Conversion(secretMsg)
+    bits = Conversion(message)
     # - Modify pixels
     for i in range(len(bits)):
-        x = shuffledIndicies[i] % dimensions[0]
-        y = int(shuffledIndicies[i] / dimensions[0])
+        x = shuffledIndices[i] % dimensions[0]
+        y = int(shuffledIndices[i] / dimensions[0])
 
         p = pixels[x, y][plane]
         p = format(p, "b").zfill(8)
@@ -192,7 +190,7 @@ def main(var):
                 pixels[x, y] = ModifyPixel(pixels[x, y], 0, sigBit, plane)
 
     # - File handling
-    FileHandle(coverImage, var)
+    coverImage.save(savePath, 'BMP')
     Main.Display("\n", var)
     Main.Display("ALL DONE", var)
     Main.Display("\n", var)

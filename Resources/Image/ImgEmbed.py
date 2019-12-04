@@ -1,6 +1,7 @@
 from tkinter import filedialog, messagebox
 from PIL import Image as cImage
 from sys import path as syspath
+from datetime import date
 from os import path
 import numpy as np
 import random
@@ -86,21 +87,14 @@ def Initialising(coverImage, coverImg, image, var):
 
 def FileHandle(coverImage, var):
     Main.Display("Fetching image file directory...", var)
-    image = filedialog.asksaveasfilename(initialdir=path.dirname(os.getcwd()) + "/Output/Embed",
-                                         defaultextension="*.jpg",
-                                         title="Save image file",
-                                         filetypes=(("jpg files", "*.jpg"), ("all files", "*.*")))
-    if ExitApplication(image):
+    savePath = filedialog.asksaveasfilename(initialdir=path.dirname(os.getcwd()) + "/Output/Embed",
+                                            defaultextension="*.jpg",
+                                            title="Save image file",
+                                            filetypes=(("jpg files", "*.jpg"), ("all files", "*.*")))
+    if ExitApplication(savePath):
         FileHandle(coverImage, var)
 
-    coverImage.save(image, 'BMP')
-
-
-def BitShuffle(imageBits, key):
-    random.seed(key)
-    length = list(range(len(imageBits)))
-    random.shuffle(length)
-    return "".join([imageBits[i] for i in length])
+    return savePath
 
 
 def Ordering(dimensions, key):
@@ -159,26 +153,33 @@ def ExitApplication(file):
             return True
 
 
+def WaterMark(imageBits, savePath):
+    watermark = savePath[-3:].upper() + "/dylan/" + date.today().strftime("%Y-%m-%d")
+    watermark = ''.join(format(ord(i), 'b') for i in watermark)
+    index = random.randint(0, len(imageBits))
+    return imageBits[:index] + watermark + imageBits[index:]
+
+
 def main(var):
     # - Optional configurations
     sigBit, plane = Config(var)
     # - User inputs
     coverImg, image, key = Inputs(var)
-    # - Opening image and text
+    # - Opening images
     coverImage, imageBits = Opening(coverImg, image, var)
+    savePath = FileHandle(coverImage, var)
     # - Opening text
     dimensions, pixels = Initialising(coverImage, coverImg, image, var)
     # - Seeding
-    shuffledIndicies = Ordering(dimensions, key)
-    imageBits = BitShuffle(imageBits, key)
+    shuffledIndices = Ordering(dimensions, key)
+    imageBits = WaterMark(imageBits, savePath)
+    print(imageBits)
     # - Conversion
     bits = AddLength(imageBits)
-    print(bits)
     # - Modify pixels
     for i in range(len(bits)):
-        x = shuffledIndicies[i] % dimensions[0]
-        y = int(shuffledIndicies[i] / dimensions[0])
-
+        x = shuffledIndices[i] % dimensions[0]
+        y = int(shuffledIndices[i] / dimensions[0])
         p = pixels[x, y][plane]
         p = format(p, "b").zfill(8)
 
@@ -192,7 +193,7 @@ def main(var):
                 pixels[x, y] = ModifyPixel(pixels[x, y], 0, sigBit, plane)
 
     # - File handling
-    FileHandle(coverImage, var)
+    coverImage.save(savePath, 'BMP')
     Main.Display("\n", var)
     Main.Display("ALL DONE", var)
     Main.Display("\n", var)

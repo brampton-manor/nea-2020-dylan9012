@@ -111,8 +111,7 @@ def ChooseImgExtract():
     ImgExtract.main(var)
 
 
-
-if __name__ == "__main__":
+if __name__ == "__main__":                   # wypher, actliv, mofxuh
     root = Tk()
     root.geometry("700x400")
     root.resizable(0, 0)

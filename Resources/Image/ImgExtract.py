@@ -1,6 +1,7 @@
 from tkinter import filedialog, messagebox
 from sys import path as syspath
 from PIL import Image as cImage
+from datetime import datetime
 from os import path
 import numpy as np
 import random
@@ -16,7 +17,8 @@ def ErrorMessage(errorCase, var):
         1: "Invalid choice",
         2: "Invalid inputs",
         3: "Please choose file",
-        4: "Input not numerical"
+        4: "Input not numerical",
+        5: "Cover image not compatible with extractor. Please try a different image"
     }
     Main.Display("Error {case}: {number}".format(case=errorCase, number=switch.get(errorCase)), var)
     Main.Display("\n", var)
@@ -59,7 +61,7 @@ def Inputs(var):
     except ValueError:
         ErrorMessage(4, var)
         return Inputs(var)
-    return image, key
+    return image, key, image[-3:].upper()
 
 
 def Initialising(coverImage):
@@ -81,16 +83,6 @@ def FileHandle(imageBits, var):
     bits = np.array(list(imageBits))
     bytes = np.packbits(bits)
     bytes.tofile(image)
-
-
-def BitShuffle(imageBits, key):
-    random.seed(key)
-    length = list(range(len(imageBits)))
-    random.shuffle(length)
-    out = [None] * len(imageBits)
-    for i, x in enumerate(length):
-        out[x] = imageBits[i]
-    return "".join(out)
 
 
 def Ordering(dimensions, key):
@@ -121,35 +113,65 @@ def ExitApplication(file):
             return True
 
 
+def WaterMark(imageBits, i, fileType, var):
+    string = "/dylan/"
+    imageString = ""
+    for i in range(0, len(imageBits) // 8):
+        byte = imageBits[i:i + 8]
+        letter = int(byte, 2)
+        if letter >= 45 and letter <= 126:
+            imageString += chr(letter)
+    print('\n\n', imageString)
+
+    index = str(imageBits).find(string, i)
+    if index == -1:
+        ErrorMessage(5, var)
+        return "Error"
+    try:
+        datetime.strptime(string[index + 7:index + 17], '%Y-%m-%d')
+    except ValueError:
+        return "Error"
+
+    if string[index - 3:index] == fileType:
+        return format(string.replace(string[index - 3:index + 17], ''), 'b')
+    else:
+        return WaterMark(imageBits, index, fileType, var)
+
+
 def main(var):
     # - Optional configurations
     sigBit, plane = Config(var)
     # - User inputs
-    image, key = Inputs(var)
+    image, key, fileType = Inputs(var)
     # - Opening image
     coverImage = Opening(image, var)
     # - Extracting image information
     dimensions, pixels = Initialising(coverImage)
     # - Pixel embedding order
-    shuffledIndicies = Ordering(dimensions, key)
+    shuffledIndices = Ordering(dimensions, key)
     # - Extraction
     extractedBits = []
-    for i in shuffledIndicies:
+    for i in shuffledIndices:
         x = i % dimensions[0]
         y = int(i / dimensions[0])
         p = format(pixels[x, y][plane], "b").zfill(8)
         extractedBits.append(p[sigBit])
+    ImgLength = int("".join(extractedBits[:100]), 2)
+    extractedBits = "".join(extractedBits[100:100 + ImgLength])
 
-    MsgLength = int("".join(extractedBits[:100]), 2)
-    extractedBits = "".join(extractedBits[100:100 + MsgLength])
+    print(extractedBits)
 
-    imageBits = BitShuffle(extractedBits, key)
+    imageBits = WaterMark(extractedBits, 0, fileType, var)
 
-    # - File handling
-    FileHandle(imageBits, var)
-    Main.Display("\n", var)
-    Main.Display("ALL DONE", var)
-    Main.Display("\n", var)
+    # - Check for watermark
+    if imageBits == "Error":
+        ErrorMessage(5, var)
+    else:
+        # - File handling
+        FileHandle(imageBits, var)
+        Main.Display("\n", var)
+        Main.Display("ALL DONE", var)
+        Main.Display("\n", var)
 
 
 if __name__ == "__main__":

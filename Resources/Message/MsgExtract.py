@@ -1,6 +1,7 @@
 from tkinter import filedialog, messagebox
 from sys import path as syspath
 from PIL import Image as cImage
+from datetime import datetime
 from os import path
 import random
 import string
@@ -16,7 +17,8 @@ def ErrorMessage(errorCase, var):
         1: "Invalid choice",
         2: "Invalid inputs",
         3: "Please choose file",
-        4: "Input not numerical"
+        4: "Input not numerical",
+        5: "Cover image not compatible with extractor. Please try a different image"
     }
     Main.Display("Error {case}: {number}".format(case=errorCase, number=switch.get(errorCase)), var)
     Main.Display("\n", var)
@@ -59,7 +61,7 @@ def Inputs(var):
     except ValueError:
         ErrorMessage(4, var)
         return Inputs(var)
-    return image, key
+    return image, key, image[-3:].upper()
 
 
 def Initialising(coverImage):
@@ -91,10 +93,10 @@ def TextTransformation(secretMsg, key):
 
 
 def Ordering(dimensions, key):
-    shuffledIndicies = list(range(0, dimensions[0] * dimensions[1]))
+    shuffledIndices = list(range(0, dimensions[0] * dimensions[1]))
     random.seed(key)
-    random.shuffle(shuffledIndicies)
-    return shuffledIndicies
+    random.shuffle(shuffledIndices)
+    return shuffledIndices
 
 
 def Opening(image, var):
@@ -118,11 +120,27 @@ def ExitApplication(file):
             return True
 
 
+def WaterMark(secretMsg, i, fileType, var):
+    index = secretMsg.find('/dylan/', i)
+    if index == -1:
+        ErrorMessage(5, var)
+        return "Error"
+    try:
+        datetime.strptime(secretMsg[index + 7:index + 17], '%Y-%m-%d')
+    except ValueError:
+        return "Error"
+
+    if secretMsg[index - 3:index] == fileType:
+        return secretMsg.replace(secretMsg[index - 3:index + 17], '')
+    else:
+        return WaterMark(secretMsg, index, fileType, var)
+
+
 def main(var):
     # - Optional configurations
     sigBit, plane = Config(var)
     # - User inputs
-    image, key = Inputs(var)
+    image, key, fileType = Inputs(var)
     # - Opening image
     coverImage = Opening(image, var)
     # - Extracting image information
@@ -151,13 +169,16 @@ def main(var):
             counter = 0
             word.clear()
 
-    secretMsg = TextTransformation(secretMsg, key)
+    secretMsg = WaterMark(secretMsg, 0, fileType, var)
 
-    # - File handling
-    FileHandle(secretMsg, var)
-    Main.Display("\n", var)
-    Main.Display("ALL DONE", var)
-    Main.Display("\n", var)
+    if secretMsg == "Error":
+        ErrorMessage(5, var)
+    else:
+        # - File handling
+        FileHandle(secretMsg, var)
+        Main.Display("\n", var)
+        Main.Display("ALL DONE", var)
+        Main.Display("\n", var)
 
 
 if __name__ == "__main__":
