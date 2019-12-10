@@ -104,8 +104,8 @@ def Ordering(dimensions, key):
 
 
 def Conversion(secretMsg):
-    sbits = "".join(format(ord(char), "b").zfill(7) for char in secretMsg)
-    lbits = format(len(secretMsg), "b").zfill(14)
+    sbits = ''.join(format(ord(char), 'b').zfill(7) for char in secretMsg)
+    lbits = format(len(secretMsg), 'b').zfill(14)
     bits = lbits + sbits
     return bits
 
@@ -113,19 +113,19 @@ def Conversion(secretMsg):
 def ModifyPixel(pixel, modifier, sigBit, plane):
     pixel = list(pixel)
     if plane == 0:
-        planeList = list("".join((format(pixel[plane], "b")).zfill(8)))
+        planeList = list(''.join((format(pixel[plane], 'b')).zfill(8)))
         planeList[sigBit] = str(modifier)
-        pixel[plane] = int("".join(planeList), 2)
+        pixel[plane] = int(''.join(planeList), 2)
 
     if plane == 1:
-        planeList = list("".join((format(pixel[plane], "b")).zfill(8)))
+        planeList = list(''.join((format(pixel[plane], 'b')).zfill(8)))
         planeList[sigBit] = str(modifier)
-        pixel[plane] = int("".join(planeList), 2)
+        pixel[plane] = int(''.join(planeList), 2)
 
     if plane == 2:
-        planeList = list("".join((format(pixel[plane], "b")).zfill(8)))
+        planeList = list(''.join((format(pixel[plane], 'b')).zfill(8)))
         planeList[sigBit] = str(modifier)
-        pixel[plane] = int("".join(planeList), 2)
+        pixel[plane] = int(''.join(planeList), 2)
     return pixel[0], pixel[1], pixel[2]
 
 
@@ -169,16 +169,14 @@ def main(var):
     savePath = FileHandle(coverImage, var)
     # - Seeding
     shuffledIndices = Ordering(dimensions, key)
-    message = WaterMark(message, savePath)
     # - Binary conversion
+    message = WaterMark(message, savePath)
     bits = Conversion(message)
     # - Modify pixels
     for i in range(len(bits)):
         x = shuffledIndices[i] % dimensions[0]
         y = int(shuffledIndices[i] / dimensions[0])
-
-        p = pixels[x, y][plane]
-        p = format(p, "b").zfill(8)
+        p = format(pixels[x, y][plane], 'b').zfill(8)
 
         # - Change if existing bit is 0, only if secret bit is 1
         if p[sigBit] == "0":

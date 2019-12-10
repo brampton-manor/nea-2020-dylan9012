@@ -87,7 +87,7 @@ def FileHandle(secretMsg, var):
 def TextTransformation(secretMsg, key):
     ASCII = string.printable
     random.seed(key)
-    shuffledASCII = "".join(random.sample(ASCII, len(ASCII)))
+    shuffledASCII = ''.join(random.sample(ASCII, len(ASCII)))
     table = str.maketrans(shuffledASCII, ASCII)
     return secretMsg.translate(table)
 
@@ -152,10 +152,10 @@ def main(var):
     for i in shuffledIndicies:
         x = i % dimensions[0]
         y = int(i / dimensions[0])
-        p = format(pixels[x, y][plane], "b").zfill(8)
+        p = format(pixels[x, y][plane], 'b').zfill(8)
         extractedBits.append(p[sigBit])
 
-    MsgLength = int("".join(extractedBits[:14]), 2)
+    MsgLength = int(''.join(extractedBits[:14]), 2)
     extractedMsg = extractedBits[14:14 + MsgLength * 7]
 
     secretMsg = ""
@@ -165,7 +165,7 @@ def main(var):
         counter += 1
         word.append(i)
         if counter == 7:
-            secretMsg += chr(int("".join(word), 2))
+            secretMsg += chr(int(''.join(word), 2))
             counter = 0
             word.clear()
 

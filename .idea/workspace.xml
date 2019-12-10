@@ -23,61 +23,75 @@
     <select />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/Main.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="178">
-                  <caret line="14" selection-start-line="14" selection-end-line="14" />
-                  <folding>
-                    <element signature="e#0#31#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Resources/Image/ImgEmbed.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="146">
-                  <caret line="167" column="5" selection-start-line="167" selection-start-column="5" selection-end-line="167" selection-end-column="5" />
-                  <folding>
-                    <element signature="e#0#42#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Resources/Image/ImgExtract.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="152">
-                  <caret line="145" column="7" selection-start-line="145" selection-start-column="7" selection-end-line="145" selection-end-column="7" />
-                  <folding>
-                    <element signature="e#0#42#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/Resources/Message/test.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="238">
-                  <caret line="14" column="21" selection-start-line="14" selection-start-column="21" selection-end-line="14" selection-end-column="21" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="24" column="48" lean-forward="true" selection-start-line="24" selection-start-column="48" selection-end-line="24" selection-end-column="48" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Resources/Message/MsgEmbed.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="447">
+              <caret line="178" column="35" selection-start-line="178" selection-start-column="35" selection-end-line="178" selection-end-column="35" />
+              <folding>
+                <element signature="e#0#42#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Resources/Message/MsgExtract.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="297">
+              <caret line="154" column="19" selection-start-line="154" selection-start-column="12" selection-end-line="154" selection-end-column="19" />
+              <folding>
+                <element signature="e#0#42#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Resources/Image/ImgEmbed.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2715">
+              <caret line="181" column="38" selection-start-line="181" selection-start-column="38" selection-end-line="181" selection-end-column="38" />
+              <folding>
+                <element signature="e#0#42#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Resources/Image/ImgExtract.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-333">
+              <caret line="89" column="20" lean-forward="true" selection-start-line="89" selection-start-column="20" selection-end-line="89" selection-end-column="20" />
+              <folding>
+                <element signature="e#0#42#0" expanded="true" />
+                <element signature="e#313#839#0" />
+                <element signature="e#863#1325#0" />
+                <element signature="e#1349#2119#0" />
+                <element signature="e#2156#2245#0" />
+                <element signature="e#2284#2880#0" />
+                <element signature="e#3100#3287#0" />
+                <element signature="e#3321#3686#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -95,11 +109,17 @@
       <find>TkinterInput</find>
       <find>enter nu</find>
       <find>print(image</find>
+      <find>&quot;&quot;.join</find>
+      <find>format(</find>
     </findStrings>
     <replaceStrings>
       <replace>Display</replace>
       <replace>Main.TkinterInput</replace>
+      <replace>''.join</replace>
     </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -111,18 +131,18 @@
         <option value="$PROJECT_DIR$/Resources/Image/Extract.py" />
         <option value="$PROJECT_DIR$/Resources/Image/Embed.py" />
         <option value="$PROJECT_DIR$/Resources/Message/test.py" />
-        <option value="$PROJECT_DIR$/Resources/Message/MsgEmbed.py" />
-        <option value="$PROJECT_DIR$/Resources/Image/ImgExtract.py" />
-        <option value="$PROJECT_DIR$/Resources/Image/ImgEmbed.py" />
         <option value="$PROJECT_DIR$/Main.py" />
+        <option value="$PROJECT_DIR$/Resources/Message/MsgExtract.py" />
+        <option value="$PROJECT_DIR$/Resources/Message/MsgEmbed.py" />
+        <option value="$PROJECT_DIR$/Resources/Image/ImgEmbed.py" />
+        <option value="$PROJECT_DIR$/Resources/Image/ImgExtract.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="892" />
-    <option name="y" value="71" />
-    <option name="width" value="975" />
-    <option name="height" value="975" />
+  <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
+    <option name="width" value="1693" />
+    <option name="height" value="976" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -130,27 +150,22 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="Coursework" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Coursework" type="462c0819:PsiDirectoryNode" />
+              <item name="Code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Code" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Coursework" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Coursework" type="462c0819:PsiDirectoryNode" />
+              <item name="Code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Code" type="462c0819:PsiDirectoryNode" />
               <item name="Resources" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Coursework" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Coursework" type="462c0819:PsiDirectoryNode" />
-              <item name="Resources" type="462c0819:PsiDirectoryNode" />
-              <item name="Image" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Coursework" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Coursework" type="462c0819:PsiDirectoryNode" />
+              <item name="Code" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Code" type="462c0819:PsiDirectoryNode" />
               <item name="Resources" type="462c0819:PsiDirectoryNode" />
               <item name="Message" type="462c0819:PsiDirectoryNode" />
             </path>
@@ -158,10 +173,10 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -201,6 +216,28 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Resources/Extract.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="ImgEmbed" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Stego" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Resources/Image" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Resources/Image/ImgEmbed.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -279,6 +316,7 @@
       <list>
         <item itemvalue="Python.Main" />
         <item itemvalue="Python.ImgExtract" />
+        <item itemvalue="Python.ImgEmbed" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.Extract" />
       </list>
@@ -297,11 +335,16 @@
       <workItem from="1563782409692" duration="280000" />
       <workItem from="1563782783747" duration="9539000" />
       <workItem from="1563802372797" duration="12809000" />
+      <workItem from="1575806189357" duration="3362000" />
+      <workItem from="1575915909605" duration="6033000" />
+      <workItem from="1576008927783" duration="4413000" />
+      <workItem from="1576014271429" duration="22000" />
+      <workItem from="1576014297367" duration="1198000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="22628000" />
+    <option name="totallyTimeSpent" value="37656000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -313,21 +356,20 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
+    <frame x="0" y="23" width="1693" height="976" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49780703" visible="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49780703" visible="true" weight="0.07328892" />
       <window_info id="Structure" order="1" sideWeight="0.502193" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3550212" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.35859728" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32956153" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32918552" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Terminal" order="11" />
@@ -366,64 +408,54 @@
     <option name="version" value="1" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Code$Main.coverage" NAME="Main Coverage Results" MODIFIED="1576014002348" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Coursework$test.coverage" NAME="test Coverage Results" MODIFIED="1563813138217" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Resources/Message" />
+    <SUITE FILE_PATH="coverage/Stego$Main.coverage" NAME="Main Coverage Results" MODIFIED="1563782552413" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Coursework$Extract.coverage" NAME="Extract Coverage Results" MODIFIED="1563799689335" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Resources" />
     <SUITE FILE_PATH="coverage/Coursework$Main.coverage" NAME="Main Coverage Results" MODIFIED="1563815731579" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Coursework$test.coverage" NAME="test Coverage Results" MODIFIED="1563813138217" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Resources/Message" />
+    <SUITE FILE_PATH="coverage/Code$ImgExtract.coverage" NAME="ImgExtract Coverage Results" MODIFIED="1576009125398" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Resources/Image" />
+    <SUITE FILE_PATH="coverage/Code$ImgEmbed.coverage" NAME="ImgEmbed Coverage Results" MODIFIED="1575925168428" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Resources/Image" />
     <SUITE FILE_PATH="coverage/Coursework$ImgExtract.coverage" NAME="ImgExtract Coverage Results" MODIFIED="1563813142041" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Resources/Image" />
-    <SUITE FILE_PATH="coverage/Stego$Main.coverage" NAME="Main Coverage Results" MODIFIED="1563782552413" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Resources/Embed.py">
+    <entry file="file://$PROJECT_DIR$/Resources/Embed.py" />
+    <entry file="file://$PROJECT_DIR$/Resources/Extract.py" />
+    <entry file="file://$PROJECT_DIR$/Resources/Message/Extract.py" />
+    <entry file="file://$PROJECT_DIR$/Resources/Image/Extract.py" />
+    <entry file="file://$PROJECT_DIR$/Resources/Message/Embed.py" />
+    <entry file="file://$PROJECT_DIR$/Resources/Image/Embed.py" />
+    <entry file="file://$PROJECT_DIR$/Resources/Message/test.py" />
+    <entry file="file://$PROJECT_DIR$/Resources/Image/ImgEmbed.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="27" selection-start-line="27" selection-end-line="27" />
+        <state relative-caret-position="2715">
+          <caret line="181" column="38" selection-start-line="181" selection-start-column="38" selection-end-line="181" selection-end-column="38" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Resources/Extract.py">
+    <entry file="file://$PROJECT_DIR$/Resources/Image/ImgExtract.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="26" selection-start-line="26" selection-end-line="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Resources/Message/Extract.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="81" column="16" lean-forward="true" selection-start-line="81" selection-start-column="16" selection-end-line="81" selection-end-column="16" />
+        <state relative-caret-position="-333">
+          <caret line="89" column="20" lean-forward="true" selection-start-line="89" selection-start-column="20" selection-end-line="89" selection-end-column="20" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
+            <element signature="e#313#839#0" />
+            <element signature="e#863#1325#0" />
+            <element signature="e#1349#2119#0" />
+            <element signature="e#2156#2245#0" />
+            <element signature="e#2284#2880#0" />
+            <element signature="e#3100#3287#0" />
+            <element signature="e#3321#3686#0" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Resources/Image/Extract.py">
+    <entry file="file://$PROJECT_DIR$/Resources/Message/MsgExtract.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
-          <caret line="80" column="36" lean-forward="true" selection-start-line="80" selection-start-column="36" selection-end-line="80" selection-end-column="36" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Resources/Message/Embed.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="43" column="16" lean-forward="true" selection-start-line="43" selection-start-column="16" selection-end-line="43" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Resources/Image/Embed.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="87" column="77" selection-start-line="87" selection-start-column="77" selection-end-line="87" selection-end-column="77" />
+        <state relative-caret-position="297">
+          <caret line="154" column="19" selection-start-line="154" selection-start-column="12" selection-end-line="154" selection-end-column="19" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
           </folding>
@@ -432,35 +464,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Resources/Message/MsgEmbed.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="108" column="34" selection-start-line="108" selection-start-column="34" selection-end-line="108" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Resources/Message/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="21" selection-start-line="14" selection-start-column="21" selection-end-line="14" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Resources/Image/ImgExtract.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="145" column="7" selection-start-line="145" selection-start-column="7" selection-end-line="145" selection-end-column="7" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Resources/Image/ImgEmbed.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="146">
-          <caret line="167" column="5" selection-start-line="167" selection-start-column="5" selection-end-line="167" selection-end-column="5" />
+        <state relative-caret-position="447">
+          <caret line="178" column="35" selection-start-line="178" selection-start-column="35" selection-end-line="178" selection-end-column="35" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
           </folding>
@@ -469,8 +474,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="14" selection-start-line="14" selection-end-line="14" />
+        <state relative-caret-position="360">
+          <caret line="24" column="48" lean-forward="true" selection-start-line="24" selection-start-column="48" selection-end-line="24" selection-end-column="48" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>

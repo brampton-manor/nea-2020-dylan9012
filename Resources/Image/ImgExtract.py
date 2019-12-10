@@ -115,25 +115,25 @@ def ExitApplication(file):
 
 def WaterMark(imageBits, i, fileType, var):
     string = "/dylan/"
-    imageString = ""
-    for i in range(0, len(imageBits) // 8):
-        byte = imageBits[i:i + 8]
-        letter = int(byte, 2)
-        if letter >= 45 and letter <= 126:
-            imageString += chr(letter)
-    print('\n\n', imageString)
+    string = ''.join(format(ord(i), 'b').zfill(8) for i in string)
 
     index = str(imageBits).find(string, i)
     if index == -1:
         ErrorMessage(5, var)
         return "Error"
+
+    # date validation
+    date = imageBits[index + 7 * 8:index + 17 * 8]
     try:
-        datetime.strptime(string[index + 7:index + 17], '%Y-%m-%d')
+        datetime.strptime(''.join(chr(int(date[i:i + 8], 2)) for i in range(0, len(date), 8)), '%Y-%m-%d')  # converts 8
+        # bit binary to text
     except ValueError:
         return "Error"
 
-    if string[index - 3:index] == fileType:
-        return format(string.replace(string[index - 3:index + 17], ''), 'b')
+    # file-type validation
+    type = imageBits[index - 3 * 8:index]
+    if ''.join(chr(int(type[i:i + 8], 2)) for i in range(0, len(type), 8)) == fileType:
+        return imageBits.replace(imageBits[index - 3 * 8:index + 17 * 8], '')
     else:
         return WaterMark(imageBits, index, fileType, var)
 
@@ -154,12 +154,10 @@ def main(var):
     for i in shuffledIndices:
         x = i % dimensions[0]
         y = int(i / dimensions[0])
-        p = format(pixels[x, y][plane], "b").zfill(8)
+        p = format(pixels[x, y][plane], 'b').zfill(8)
         extractedBits.append(p[sigBit])
-    ImgLength = int("".join(extractedBits[:100]), 2)
-    extractedBits = "".join(extractedBits[100:100 + ImgLength])
-
-    print(extractedBits)
+    ImgLength = int(''.join(extractedBits[:100]), 2)
+    extractedBits = ''.join(extractedBits[100:100 + ImgLength])
 
     imageBits = WaterMark(extractedBits, 0, fileType, var)
 

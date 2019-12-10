@@ -105,7 +105,7 @@ def Ordering(dimensions, key):
 
 
 def AddLength(imageBits):
-    length = format(len(imageBits), "b").zfill(100)
+    length = format(len(imageBits), 'b').zfill(100)
     bits = length + imageBits
     return bits
 
@@ -113,19 +113,19 @@ def AddLength(imageBits):
 def ModifyPixel(pixel, modifier, sigBit, plane):
     pixel = list(pixel)
     if plane == 0:
-        planeList = list("".join((format(pixel[plane], "b")).zfill(8)))
+        planeList = list(''.join((format(pixel[plane], "b")).zfill(8)))
         planeList[sigBit] = str(modifier)
-        pixel[plane] = int("".join(planeList), 2)
+        pixel[plane] = int(''.join(planeList), 2)
 
     if plane == 1:
-        planeList = list("".join((format(pixel[plane], "b")).zfill(8)))
+        planeList = list(''.join((format(pixel[plane], "b")).zfill(8)))
         planeList[sigBit] = str(modifier)
-        pixel[plane] = int("".join(planeList), 2)
+        pixel[plane] = int(''.join(planeList), 2)
 
     if plane == 2:
-        planeList = list("".join((format(pixel[plane], "b")).zfill(8)))
+        planeList = list(''.join((format(pixel[plane], "b")).zfill(8)))
         planeList[sigBit] = str(modifier)
-        pixel[plane] = int("".join(planeList), 2)
+        pixel[plane] = int(''.join(planeList), 2)
     return pixel[0], pixel[1], pixel[2]
 
 
@@ -134,7 +134,7 @@ def Opening(coverImage, image, var):
         coverImage = cImage.open(coverImage)
         bytes = np.fromfile(image, dtype="uint8")
         bits = np.unpackbits(bytes)
-        imageBits = "".join(str(i) for i in list(bits))
+        imageBits = ''.join(str(i) for i in list(bits))
         return coverImage, imageBits
     except OSError:
         ErrorMessage(5, var)
@@ -155,7 +155,7 @@ def ExitApplication(file):
 
 def WaterMark(imageBits, savePath):
     watermark = savePath[-3:].upper() + "/dylan/" + date.today().strftime("%Y-%m-%d")
-    watermark = ''.join(format(ord(i), 'b') for i in watermark)
+    watermark = ''.join(format(ord(i), 'b').zfill(8) for i in watermark)
     index = random.randint(0, len(imageBits))
     return imageBits[:index] + watermark + imageBits[index:]
 
@@ -173,15 +173,13 @@ def main(var):
     # - Seeding
     shuffledIndices = Ordering(dimensions, key)
     imageBits = WaterMark(imageBits, savePath)
-    print(imageBits)
     # - Conversion
     bits = AddLength(imageBits)
     # - Modify pixels
     for i in range(len(bits)):
         x = shuffledIndices[i] % dimensions[0]
         y = int(shuffledIndices[i] / dimensions[0])
-        p = pixels[x, y][plane]
-        p = format(p, "b").zfill(8)
+        p = format(pixels[x, y][plane], 'b').zfill(8)
 
         # - Change if existing bit is 0, only if secret bit is 1
         if p[sigBit] == "0":
