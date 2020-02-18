@@ -1,5 +1,6 @@
 from sys import path as syspath
 from tkinter import *
+from tkinter import messagebox
 import os
 
 syspath.insert(0, os.getcwd() + "/Resources/Message")
@@ -58,12 +59,17 @@ class ButtonBar(Frame):
 class Interface(Tk):
     def __init__(self):
         Tk.__init__(self)
+        Tk.protocol(self, "WM_DELETE_WINDOW", self.onexit)
         Tk.title(self, "Main")
         Tk.geometry(self, "1000x500")
 
         menubar = MenuBar(self)
         self.config(menu=menubar)
         self.label()
+
+    def onexit(self):
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            raise SystemExit
 
     def label(self):
         self.var = StringVar()
