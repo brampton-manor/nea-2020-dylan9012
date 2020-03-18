@@ -1,5 +1,8 @@
+from tkinter import messagebox, filedialog
+from PIL import Image as cImage
+import time
+import os
 import tkinter as tk
-from tkinter import messagebox
 from tools import msg_embed, msg_extract, img_embed, img_extract
 
 
@@ -48,7 +51,7 @@ class Interface(tk.Tk):
         tk.Tk.__init__(self)
         tk.Tk.protocol(self, "WM_DELETE_WINDOW", self.on_exit)
         tk.Tk.title(self, "Main")
-        tk.Tk.geometry(self, "775x450")
+        tk.Tk.geometry(self, "1000x500")
 
         self.screen_var = None
         self.button_var = None
@@ -119,11 +122,85 @@ class Interface(tk.Tk):
 
         return text[self.radio_var.get()]
 
+    @staticmethod
+    def exit_application(file):
+        if file == "":
+            msg_box = messagebox.askquestion('Exit Application', 'Are you sure you want to exit the application',
+                                             icon='warning')
+            if msg_box == 'yes':
+                raise SystemExit
+            else:
+                messagebox.showinfo('Return', 'You will now return to the application screen')
+                return True
+
     def msg_embed(self):
-        msg_embed.Main(self)
+        files = []
+
+        while True:
+            message_path = filedialog.askopenfilename(title="Select text file",
+                                                      filetypes=(("txt files", "*.txt"), ("all files", "*.*")))
+            if self.exit_application(message_path):
+                self.on_exit()
+            image_path = filedialog.askopenfilename(title="Select image file",
+                                                    filetypes=(("bmp files", "*.bmp"), ("all files", "*.*")))
+            if self.exit_application(image_path):
+                self.on_exit()
+
+            try:
+                cImage.open(image_path)
+                text_handle = open(message_path, 'r')
+                message = text_handle.read()
+                resolution = os.stat(image_path).st_size * 8
+                secret_bits = len(message) * 7
+                if secret_bits > resolution:
+                    messagebox.showinfo('Return',
+                                        "The message binary values exceeds the resolution binary values, therefore "
+                                        "will not work. "
+                                        "Please try a shorter message or larger image.\n")
+                    continue
+            except OSError:
+                messagebox.showinfo('Return', "Invalid plaintext or image paths...")
+                continue
+
+            files.append([message_path, image_path])
+            msg_box = messagebox.askquestion('Processing', 'Add more files to embed?',
+                                             icon='warning')
+            if msg_box == 'no':
+                break
+            else:
+                messagebox.showinfo('Return', 'Select')
+        for i in files:
+            msg_embed.Main(self, i[0], i[1])
 
     def msg_extract(self):
-        msg_extract.Main(self)
+        files = []
+
+        while True:
+            image_path = filedialog.askopenfilename(title="Select image file",
+                                                    filetypes=(("bmp files", "*.bmp"), ("all files", "*.*")))
+
+            if self.exit_application(image_path):
+                self.on_exit()
+
+            try:
+                cover_image = cImage.open(image_path)
+
+                if ...:
+                    continue
+            except OSError:
+                messagebox.showinfo('Return', "Invalid plaintext or image paths...")
+                continue
+
+            files.append([image_path])
+            msg_box = messagebox.askquestion('Processing', 'Add more files to extract?',
+                                             icon='warning')
+            if msg_box == 'no':
+                break
+            else:
+                messagebox.showinfo('Return', 'Select')
+
+        for i in files:
+            msg_extract.Main(self, i)
 
     def img_embed(self):
         img_embed.Main(self)
@@ -132,9 +209,13 @@ class Interface(tk.Tk):
         img_extract.Main(self)
 
 
-# TODO: Problem is that there is no way of validating if the watermark is there in extractors so they cannot support queues
-#  of files to be opened as it would need to be processed already to find out which eliminates the point of the queue.
+# TODO: Update embed / extract methods that takes file paths and embeds / extracts with menu option. Update the rest
+#  of the 'modules' so that it takes the paths and deals with it At the end, inform the success / failures that
+#  happened on each file --> If embed fails the media cannot be put into the image, if extract fails then the
+#  watermark was not there
+#  Either not supported or theres no point in having the
 
 
 if __name__ == "__main__":
     Interface().mainloop()
+
