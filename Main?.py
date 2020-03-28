@@ -1,8 +1,9 @@
-from tkinter import messagebox, filedialog
-from PIL import Image as cImage
-import time
 import os
 import tkinter as tk
+from tkinter import messagebox, filedialog
+
+from PIL import Image as cImage
+
 from tools import msg_embed, msg_extract, img_embed, img_extract
 
 
@@ -173,46 +174,13 @@ class Interface(tk.Tk):
             msg_embed.Main(self, i[0], i[1])
 
     def msg_extract(self):
-        files = []
-
-        while True:
-            image_path = filedialog.askopenfilename(title="Select image file",
-                                                    filetypes=(("bmp files", "*.bmp"), ("all files", "*.*")))
-
-            if self.exit_application(image_path):
-                self.on_exit()
-
-            try:
-                cover_image = cImage.open(image_path)
-
-                if ...:
-                    continue
-            except OSError:
-                messagebox.showinfo('Return', "Invalid plaintext or image paths...")
-                continue
-
-            files.append([image_path])
-            msg_box = messagebox.askquestion('Processing', 'Add more files to extract?',
-                                             icon='warning')
-            if msg_box == 'no':
-                break
-            else:
-                messagebox.showinfo('Return', 'Select')
-
-        for i in files:
-            msg_extract.Main(self, i)
+        msg_extract.Main(self)
 
     def img_embed(self):
         img_embed.Main(self)
 
     def img_extract(self):
         img_extract.Main(self)
-
-
-# TODO: Create queue of objects in extractors that have not been saved yet. Check if the watermark is there by
-#  accessing the object attributes in here and decide to save or put on a report would be showcased the user in the
-#  end.
-
 
 if __name__ == "__main__":
     Interface().mainloop()

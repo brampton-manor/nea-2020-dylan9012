@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+
 from tools import msg_embed, msg_extract, img_embed, img_extract
 
 
@@ -132,9 +133,8 @@ class Interface(tk.Tk):
         img_extract.Main(self)
 
 
-# TODO: Problem is that there is no way of validating if the watermark is there in extractors so they cannot support
-#  queues of files to be opened as it would need to be processed already to find out which eliminates the point of
-#  the queue.
+# TODO: Do the queue system
+#       Deal with finding compatible file types
 
 
 if __name__ == "__main__":

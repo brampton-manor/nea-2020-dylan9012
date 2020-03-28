@@ -1,45 +1,44 @@
-from tkinter import filedialog, messagebox
-from PIL import Image as cImage
-from datetime import datetime
-from os import path
 import random
-import os
+from datetime import datetime
+from tkinter import filedialog, messagebox
+
+from PIL import Image
 
 
 class Main:
     def __init__(self, parent):
         self.master = parent
         # - Optional configurations
-        self.sig_bit, self.plane = self.config()
+        self.sig_bit, self.plane, self.key = self.inputs()
         # - User inputs, and extracting image information
-        self.cover_image, self.image_path, self.key, self.file_type, self.dimensions, self.pixels = self.inputs()
+        self.cover_image, self.image_path, self.file_type, self.dimensions, self.pixels = self.config()
         # - Pixel embedding order
         shuffled_indices = self.ordering()
         # - Extraction
-        extracted_bits = []
+        extracted_bits = ""
         for i in shuffled_indices:
             x = i % self.dimensions[0]
-            y = int(i / self.dimensions[0])
+            y = i // self.dimensions[0]
             p = format(self.pixels[x, y][self.plane], 'b').zfill(8)
-            extracted_bits.append(p[self.sig_bit])
+            extracted_bits += p[self.sig_bit]
 
-        msg_length = int(''.join(extracted_bits[:14]), 2)
+        msg_length = int(extracted_bits[:14], 2)
         extracted_msg = extracted_bits[14:14 + msg_length * 7]
 
         self.secret_msg = ""
-        word = []
+        letter = ""
         counter = 0
         for i in extracted_msg:
             counter += 1
-            word.append(i)
+            letter += i
             if counter == 7:
-                self.secret_msg += chr(int(''.join(word), 2))
+                self.secret_msg += chr(int(letter, 2))
                 counter = 0
-                word.clear()
+                letter = ""
 
         self.secret_msg = self.watermark(0)
-        if self.secret_msg == "Error":
-            self.error_message(5)
+        if not self.secret_msg:
+            self.error_message(3)
         else:
             # - File handling
             self.file_handle()
@@ -49,60 +48,55 @@ class Main:
 
     def error_message(self, case):
         switch = {
-            1: "Invalid choice",
-            2: "Invalid inputs",
-            3: "Please choose file",
-            4: "Input not numerical",
-            5: "Invalid file format"
+            1: "Input not numerical",
+            2: "Invalid file format",
+            3: "Watermark not present in image, please try another image"
         }
         self.master.display("Error {number}: {case}".format(number=case, case=switch.get(case)))
         self.master.display("\n")
         self.master.display("-" * 100)
         self.master.display("\n")
 
-    def config(self):
+    def inputs(self):
         choice = self.master.radio_input("Customised embedding?", ["Yes", "No"])
-        if choice == 'y' or choice == 'Y' or choice == "yes" or choice == "Yes":
+        if choice == "Yes":
+            try:
+                key = int(self.master.entry_input("Please enter numerical key"))
+            except ValueError:
+                self.error_message(1)
+                return self.inputs()
             sig_bit = int(self.master.entry_input("Enter significant bit"))
             plane = int(["Red", "Blue", "Green"].index(
                 self.master.radio_input("Enter Colour Plane", ["Red", "Blue", "Green"])))
         else:
             sig_bit = 7
             plane = 0
-        return sig_bit, plane
+            key = 0
+        return sig_bit, plane, key
 
-    def inputs(self):
-        location = path.dirname(os.getcwd())
+    def config(self):
         # - Image file validation
         self.master.display("Fetching image file directory...")
-        image_path = filedialog.askopenfilename(initialdir=location,
-                                                title="Select image file",
-                                                filetypes=(("bmp files", "*bmp"), ("all files", "*.*")))
+        image_path = filedialog.askopenfilename(title="Select image file",
+                                                filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"),
+                                                           ("tiff files", "*.tif"), ("gif files", "*.gif"),
+                                                           ("bitmap files", "*bmp"), ("all files", "*.*")))
         if self.exit_application(image_path):
-            return self.inputs()
+            return self.config()
 
         try:
-            cover_image = cImage.open(image_path)
+            cover_image = Image.open(image_path)
         except OSError:
-            self.error_message(5)
-            return self.inputs()
+            self.error_message(2)
+            return self.config()
 
         dimensions = cover_image.size
         pixels = cover_image.load()
-
-        # - Integer validation on key
-        try:
-            self.master.display("\n")
-            key = int(self.master.entry_input("Please enter numerical key"))
-        except ValueError:
-            self.error_message(4)
-            return self.inputs()
-        return cover_image, image_path, key, image_path[-3:].upper(), dimensions, pixels
+        return cover_image, image_path, image_path[-3:].upper(), dimensions, pixels
 
     def file_handle(self):
-        self.master.display("Fetching text file directory...")
-        save_path = filedialog.asksaveasfilename(initialdir=path.dirname(os.getcwd()),
-                                                 title="Save text file to directory",
+        self.master.display("Fetching save path...")
+        save_path = filedialog.asksaveasfilename(title="Save text file to directory",
                                                  defaultextension="*.txt",
                                                  filetypes=(("txt files", "*.txt"), ("all files", "*.*")))
         if self.exit_application(save_path):
@@ -132,13 +126,11 @@ class Main:
     def watermark(self, i):
         index = self.secret_msg.find('/dylan/', i)
         if index == -1:
-            print("Check")
-            self.error_message(5)
-            return "Error"
+            return False
         try:
             datetime.strptime(self.secret_msg[index + 7:index + 17], '%Y-%m-%d')
         except ValueError:
-            return "Error"
+            return False
 
         if self.secret_msg[index - 3:index] == self.file_type:
             return self.secret_msg.replace(self.secret_msg[index - 3:index + 17], '')

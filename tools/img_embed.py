@@ -1,19 +1,19 @@
-from tkinter import filedialog, messagebox
-from PIL import Image as cImage
-from datetime import date
-from os import path
-import numpy as np
-import random
 import os
+import random
+from datetime import date
+from tkinter import filedialog, messagebox
+
+import numpy as np
+from PIL import Image
 
 
 class Main:
     def __init__(self, parent):
         self.master = parent
         # - Optional configurations
-        self.sig_bit, self.plane = self.config()
+        self.sig_bit, self.plane, self.key = self.inputs()
         # - User inputs
-        self.image, self.cover_image, self.image_path, self.cover_image_path, self.key = self.inputs()
+        self.image, self.cover_image, self.image_path, self.cover_image_path = self.config()
         # - Opening images
         self.save_path = self.file_handle()
         # - Opening text
@@ -26,7 +26,7 @@ class Main:
         # - Modify pixels
         for i in range(len(bits)):
             x = self.shuffled_indices[i] % self.dimensions[0]
-            y = int(self.shuffled_indices[i] / self.dimensions[0])
+            y = self.shuffled_indices[i] // self.dimensions[0]
             p = format(self.pixels[x, y][self.plane], 'b').zfill(8)
 
             # - Change if existing bit is 0, only if secret bit is 1
@@ -39,69 +39,66 @@ class Main:
                     self.pixels[x, y] = self.modify_pixel(self.pixels[x, y], 0)
 
         # - File handling
-        self.cover_image.save(self.save_path, 'BMP')
+        self.cover_image.save(self.save_path, "JPG")
         self.master.display("\n")
         self.master.display("ALL DONE")
         self.master.display("\n")
 
     def error_message(self, case):
         switch = {
-            1: "Invalid choice",
-            2: "Invalid inputs",
-            3: "Please choose file",
-            4: "Input not numerical",
-            5: "Invalid file format"
+            1: "Input not numerical",
+            2: "Invalid file format"
         }
         self.master.display("Error {number}: {case}".format(number=case, case=switch.get(case)))
         self.master.display("\n")
         self.master.display("-" * 100)
         self.master.display("\n")
 
-    def config(self):
+    def inputs(self):
         choice = self.master.radio_input("Customised embedding?", ["Yes", "No"])
-        if choice == 'y' or choice == 'Y' or choice == "yes" or choice == "Yes":
+        if choice == "Yes":
+            try:
+                key = int(self.master.entry_input("Please enter numerical key"))
+            except ValueError:
+                self.error_message(1)
+                return self.inputs()
             sig_bit = int(self.master.entry_input("Enter significant bit"))
             plane = int(["Red", "Blue", "Green"].index(
                 self.master.radio_input("Enter Colour Plane", ["Red", "Blue", "Green"])))
         else:
             sig_bit = 7
             plane = 0
-        return sig_bit, plane
+            key = 0
+        return sig_bit, plane, key
 
-    def inputs(self):
-        location = path.dirname(os.getcwd())
+    def config(self):
         # - Message & image file validation
         self.master.display("Fetching cover image file directory...")
-        cover_image_path = filedialog.askopenfilename(initialdir=location,
-                                                      title="Select cover image file",
-                                                      filetypes=(("jpg files", "*.jpg"), ("all files", "*.*")))
+        cover_image_path = filedialog.askopenfilename(title="Select cover image file",
+                                                      filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"),
+                                                                 ("tiff files", "*.tif"), ("gif files", "*.gif"),
+                                                                 ("bitmap files", "*bmp"), ("all files", "*.*")))
         if self.exit_application(cover_image_path):
-            return self.inputs()
+            return self.config()
 
         self.master.display("Fetching image file directory...")
-        image_path = filedialog.askopenfilename(initialdir=location,
-                                                title="Select image file",
-                                                filetypes=(("jpg files", "*.jpg"), ("all files", "*.*")))
+        image_path = filedialog.askopenfilename(title="Select image file",
+                                                filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"),
+                                                           ("tiff files", "*.tif"), ("gif files", "*.gif"),
+                                                           ("bitmap files", "*bmp"), ("all files", "*.*")))
 
         if self.exit_application(image_path):
-            return self.inputs()
+            return self.config()
 
         try:
-            cover_image = cImage.open(cover_image_path)
+            cover_image = Image.open(cover_image_path)
             bits = np.unpackbits(np.fromfile(self.image_path, dtype="uint8"))
             image = ''.join(str(i) for i in list(bits))
         except OSError:
-            self.error_message(5)
-            return self.inputs()
+            self.error_message(2)
+            return self.config()
 
-        # - Integer validation on key
-        try:
-            self.master.display("\n")
-            key = int(self.master.entry_input("Please enter numerical key"))
-        except ValueError:
-            self.error_message(4)
-            return self.inputs()
-        return image, cover_image, image_path, cover_image_path, key
+        return image, cover_image, image_path, cover_image_path
 
     def initialising(self):
         dimensions = self.cover_image.size
@@ -116,11 +113,12 @@ class Main:
             return dimensions, pixels
 
     def file_handle(self):
-        self.master.display("Fetching image file directory...", )
-        save_path = filedialog.asksaveasfilename(initialdir=path.dirname(os.getcwd()) + "/Output/Embed",
-                                                 defaultextension="*.jpg",
+        self.master.display("Fetching save path...")
+        save_path = filedialog.asksaveasfilename(defaultextension="*.jpg",
                                                  title="Save image file",
-                                                 filetypes=(("jpg files", "*.jpg"), ("all files", "*.*")))
+                                                 filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"),
+                                                            ("tiff files", "*.tif"), ("gif files", "*.gif"),
+                                                            ("bitmap files", "*bmp"), ("all files", "*.*")))
         if self.exit_application(save_path):
             self.file_handle()
         return save_path
