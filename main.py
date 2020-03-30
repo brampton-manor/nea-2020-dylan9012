@@ -1,5 +1,6 @@
+import os
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 
 from tools import msg_embed, msg_extract, img_embed, img_extract
 
@@ -50,13 +51,13 @@ class ButtonBar(tk.Frame):
         self.height = height
         self.width = width
         tk.Button(self, text=self.text, height=self.height, width=self.width,
-                  command=self.update).pack()
+                  command=self.trigger).pack()
 
-    def update(self):
+    def trigger(self):
         self.master.button_var.set(1)
 
 
-class Interface(tk.Tk, msg_embed.Main, img_embed.Main):
+class Interface(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         tk.Tk.protocol(self, "WM_DELETE_WINDOW", self.on_exit)
@@ -74,7 +75,7 @@ class Interface(tk.Tk, msg_embed.Main, img_embed.Main):
         self.config(menu=self.menubar)
 
     def on_exit(self):
-        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+        if tk.messagebox.askokcancel("Quit", "Do you want to quit?"):
             tk.Tk.destroy(self)
 
     def label(self):
@@ -86,8 +87,10 @@ class Interface(tk.Tk, msg_embed.Main, img_embed.Main):
         label.pack(fill=tk.BOTH, expand=1)
         self.display("Please choose an option from the Toggle menu to continue...")
 
-    def display(self, string):
-        self.screen_var.set(self.screen_var.get() + string + "\n")
+    def display(self, *argv):
+        for i in argv:
+            self.screen_var.set(self.screen_var.get() + i)
+        self.screen_var.set(self.screen_var.get() + "\n")
         tk.Tk.update(self)
 
     def clear_label(self):
@@ -132,28 +135,129 @@ class Interface(tk.Tk, msg_embed.Main, img_embed.Main):
 
         return text[self.radio_var.get()]
 
+    def settings(self):
+        choice = self.radio_input("Customised embedding?", ["Yes", "No"])
+        if choice == "Yes":
+            while True:
+                try:
+                    key = int(self.entry_input("Please enter numerical key"))
+                    break
+                except ValueError:
+                    self.display("Error: Input not numerical", "\n")
+            sig_bit = int(self.entry_input("Enter significant bit"))
+            plane = int(["Red", "Blue", "Green"].index(
+                self.radio_input("Enter Colour Plane", ["Red", "Blue", "Green"])))
+        else:
+            sig_bit = 7
+            plane = 0
+            key = 0
+        return sig_bit, plane, key
+
+    @staticmethod
+    def exit_application(file):
+        if file == "":
+            msg_box = tk.messagebox.askquestion('Exit Application', 'Are you sure you want to exit the application',
+                                                icon='warning')
+            if msg_box == 'yes':
+                raise SystemExit
+            else:
+                tk.messagebox.showinfo('Return', 'You will now return to the application screen')
+                return True
+
+    def file_handle(self):
+        save_path = tk.filedialog.asksaveasfilename(parent=self, title="Save image to directory",
+                                                    filetypes=(("gif files", "*.gif"), ("png files", "*.png"),
+                                                               ("tiff files", "*.tif"), ("jpeg files", "*.jpg"),
+                                                               ("bitmap files", "*bmp"), ("all files", "*.*")))
+        if self.exit_application(save_path):
+            self.file_handle()
+        return save_path
+
     def msg_embed(self):
         self.clear_label()
         self.menubar.disable()
         files = []
-        sig_bit, plane, key = self.inputs()
+        sig_bit, plane, key = self.settings()
         while True:
-            self.message_path, self.image_path = msg_embed.Main.config(self)
-            if msg_embed.Main.initialising(self):
-                messagebox.showinfo('Return', "The message binary values exceeds the resolution binary values "
-                                              "therefore will not work. Please try a shorter message or larger image.")
+            message_path = tk.filedialog.askopenfilename(parent=self, title="Select text file",
+                                                         filetypes=(("text files", "*.txt"), ("all files", "*.*")))
+            if self.exit_application(message_path):
+                continue
+
+            image_path = tk.filedialog.askopenfilename(parent=self, title="Select image file",
+                                                       filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"),
+                                                                  ("tiff files", "*.tif"), ("gif files", "*.gif"),
+                                                                  ("bitmap files", "*.bmp"), ("pdf files", "*.pdf"),
+                                                                  ("all files", "*.*")))
+
+            if self.exit_application(image_path):
+                continue
+
+            text_handle = open(message_path, 'r')
+            message = text_handle.read()
+            resolution = os.stat(image_path).st_size * 8
+            secret_bits = len(message) * 7
+            if secret_bits > resolution:
+                tk.messagebox.showinfo('Return', "The message binary values exceeds the resolution binary values "
+                                                 "therefore will not work. Please try a shorter message or larger "
+                                                 "image.")
                 continue
             save_path = self.file_handle()
-            files.append([self.message_path, self.image_path, save_path])
-            msg_box = messagebox.askquestion('Processing', 'Add more files to embed?', icon='warning')
+            files.append([message_path, image_path, save_path])
+            msg_box = tk.messagebox.askquestion('Processing', 'Add more files to embed?', icon='warning')
             if msg_box == 'no':
                 break
             else:
-                messagebox.showinfo('Return', 'Adding more files')
+                tk.messagebox.showinfo('Return', 'Adding more files')
             self.clear_label()
         while files:
             paths = files.pop(-1)
             msg_embed.Main(sig_bit, plane, key, paths[0], paths[1], paths[2])
+        self.clear_label()
+        self.display("ALL DONE")
+        self.menubar.enable()
+
+    def img_embed(self):
+        self.clear_label()
+        self.menubar.disable()
+        files = []
+        sig_bit, plane, key = self.settings()
+        while True:
+            cover_image_path = tk.filedialog.askopenfilename(parent=self, title="Select cover image file",
+                                                             filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"),
+                                                                        ("tiff files", "*.tif"), ("gif files", "*.gif"),
+                                                                        ("bitmap files", "*.bmp"),
+                                                                        ("pdf files", "*.pdf"), ("all files", "*.*")))
+            if self.exit_application(cover_image_path):
+                continue
+
+            image_path = tk.filedialog.askopenfilename(parent=self, title="Select image file",
+                                                       filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"),
+                                                                  ("tiff files", "*.tif"), ("gif files", "*.gif"),
+                                                                  ("bitmap files", "*.bmp"), ("pdf files", "*.pdf"),
+                                                                  ("all files", "*.*")))
+
+            if self.exit_application(image_path):
+                continue
+
+            cover_size = os.stat(cover_image_path).st_size
+            image_size = os.stat(image_path).st_size
+            if image_size > cover_size:
+                tk.messagebox.showinfo('Return', "The message binary values exceeds the resolution binary values "
+                                                 "therefore will not work. Please try a shorter message or larger "
+                                                 "image.")
+                continue
+            save_path = self.file_handle()
+            files.append([image_path, cover_image_path, save_path])
+            msg_box = tk.messagebox.askquestion('Processing', 'Add more files to embed?', icon='warning')
+            if msg_box == 'no':
+                break
+            else:
+                tk.messagebox.showinfo('Return', 'Adding more files')
+            self.clear_label()
+        while files:
+            paths = files.pop(-1)
+            img_embed.Main(sig_bit, plane, key, paths[0], paths[1], paths[2])
         self.clear_label()
         self.display("ALL DONE")
         self.menubar.enable()
@@ -164,32 +268,6 @@ class Interface(tk.Tk, msg_embed.Main, img_embed.Main):
         msg_extract.Main(self)
         self.menubar.enable()
 
-    def img_embed(self):
-        self.clear_label()
-        self.menubar.disable()
-        files = []
-        sig_bit, plane, key = self.inputs()
-        while True:
-            self.image_path, self.cover_image_path = img_embed.Main.config(self)
-            if img_embed.Main.initialising(self):
-                messagebox.showinfo('Return', "The message binary values exceeds the resolution binary values "
-                                              "therefore will not work. Please try a shorter message or larger image.")
-                continue
-            save_path = self.file_handle()
-            files.append([self.image_path, self.cover_image_path, save_path])
-            msg_box = messagebox.askquestion('Processing', 'Add more files to embed?', icon='warning')
-            if msg_box == 'no':
-                break
-            else:
-                messagebox.showinfo('Return', 'Adding more files')
-            self.clear_label()
-        while files:
-            paths = files.pop(-1)
-            img_embed.Main(sig_bit, plane, key, paths[0], paths[1], paths[2])
-        self.clear_label()
-        self.display("ALL DONE")
-        self.menubar.enable()
-
     def img_extract(self):
         self.clear_label()
         self.menubar.disable()
@@ -197,8 +275,13 @@ class Interface(tk.Tk, msg_embed.Main, img_embed.Main):
         self.menubar.enable()
 
 
-# TODO: Do the queue system
-#       Deal with finding compatible file types
+# Idea: Animated gif support --> choose random frame or update all frames?
+#       Allow user to get image from url?
+
+# Changelist: Removed error message method in embeds
+#             Fixed file dialogs
+#             Removed redundant methods when inheriting
+#             Added support for pdfs
 
 
 if __name__ == "__main__":

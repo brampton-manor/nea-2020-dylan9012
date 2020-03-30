@@ -52,19 +52,19 @@ class Main:
             2: "Invalid file format",
             3: "Watermark not present in image, please try another image"
         }
-        self.master.display("Error {number}: {case}".format(number=case, case=switch.get(case)))
-        self.master.display("\n")
-        self.master.display("-" * 100)
-        self.master.display("\n")
+        self.master.display("\n", "-" * 100, "\n")
+        self.master.display("Error {}: {}".format(case, switch.get(case)))
+        self.master.display("\n", "-" * 100, "\n")
 
     def inputs(self):
         choice = self.master.radio_input("Customised embedding?", ["Yes", "No"])
         if choice == "Yes":
-            try:
-                key = int(self.master.entry_input("Please enter numerical key"))
-            except ValueError:
-                self.error_message(1)
-                return self.inputs()
+            while True:
+                try:
+                    key = int(self.master.entry_input("Please enter numerical key"))
+                    break
+                except ValueError:
+                    self.error_message(1)
             sig_bit = int(self.master.entry_input("Enter significant bit"))
             plane = int(["Red", "Blue", "Green"].index(
                 self.master.radio_input("Enter Colour Plane", ["Red", "Blue", "Green"])))
@@ -76,11 +76,11 @@ class Main:
 
     def config(self):
         # - Image file validation
-        self.master.display("Fetching image file directory...")
-        image_path = filedialog.askopenfilename(title="Select image file",
+        image_path = filedialog.askopenfilename(parent=self.master, title="Select image file",
                                                 filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"),
                                                            ("tiff files", "*.tif"), ("gif files", "*.gif"),
-                                                           ("bitmap files", "*bmp"), ("all files", "*.*")))
+                                                           ("bitmap files", "*.bmp"), ("pdf files", "*.pdf"),
+                                                           ("all files", "*.*")))
         if self.exit_application(image_path):
             return self.config()
 
@@ -95,10 +95,9 @@ class Main:
         return cover_image, image_path, image_path[-3:].upper(), dimensions, pixels
 
     def file_handle(self):
-        self.master.display("Fetching save path...")
-        save_path = filedialog.asksaveasfilename(title="Save text file to directory",
+        save_path = filedialog.asksaveasfilename(parent=self.master, title="Save text file to directory",
                                                  defaultextension="*.txt",
-                                                 filetypes=(("txt files", "*.txt"), ("all files", "*.*")))
+                                                 filetypes=(("text files", "*.txt"), ("all files", "*.*")))
         if self.exit_application(save_path):
             self.file_handle()
 
@@ -132,7 +131,7 @@ class Main:
         except ValueError:
             return False
 
-        if self.secret_msg[index - 3:index] == self.file_type:
+        if self.file_type == self.secret_msg[index - 3:index]:
             return self.secret_msg.replace(self.secret_msg[index - 3:index + 17], '')
         else:
             return self.watermark(index + 1)
