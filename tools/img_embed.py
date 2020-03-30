@@ -8,16 +8,21 @@ from PIL import Image
 
 
 class Main:
-    def __init__(self, parent):
-        self.master = parent
-        # - Optional configurations
-        self.sig_bit, self.plane, self.key = self.inputs()
-        # - User inputs
-        self.image, self.cover_image, self.image_path, self.cover_image_path = self.config()
-        # - Opening images
-        self.save_path = self.file_handle()
-        # - Opening text
-        self.dimensions, self.pixels = self.initialising()
+    def __init__(self, sig_bit, plane, key, image_path, cover_image_path, save_path):
+        self.sig_bit = sig_bit
+        self.plane = plane
+        self.key = key
+
+        self.image_path = image_path
+        self.cover_image_path = cover_image_path
+        self.save_path = save_path
+
+        self.cover_image = Image.open(self.cover_image_path)
+        self.dimensions = self.cover_image.size
+        self.pixels = self.cover_image.load()
+        bits = np.unpackbits(np.fromfile(self.image_path, dtype="uint8"))
+        self.image = ''.join(str(i) for i in list(bits))
+
         # - Seeding
         self.shuffled_indices = self.ordering()
         self.image_bits = self.watermark()
@@ -39,32 +44,32 @@ class Main:
                     self.pixels[x, y] = self.modify_pixel(self.pixels[x, y], 0)
 
         # - File handling
-        self.cover_image.save(self.save_path, "JPG")
-        self.master.display("\n")
-        self.master.display("ALL DONE")
-        self.master.display("\n")
+        if self.save_path.find('tif'):  # - Support for tiff
+            self.cover_image.save(self.save_path, format='tiff', compression='None')
+        else:
+            self.cover_image.save(self.save_path, compression='None')
 
     def error_message(self, case):
         switch = {
             1: "Input not numerical",
             2: "Invalid file format"
         }
-        self.master.display("Error {number}: {case}".format(number=case, case=switch.get(case)))
-        self.master.display("\n")
-        self.master.display("-" * 100)
-        self.master.display("\n")
+        self.display("Error {number}: {case}".format(number=case, case=switch.get(case)))
+        self.display("\n")
+        self.display("-" * 100)
+        self.display("\n")
 
     def inputs(self):
-        choice = self.master.radio_input("Customised embedding?", ["Yes", "No"])
+        choice = self.radio_input("Customised embedding?", ["Yes", "No"])
         if choice == "Yes":
             try:
-                key = int(self.master.entry_input("Please enter numerical key"))
+                key = int(self.entry_input("Please enter numerical key"))
             except ValueError:
                 self.error_message(1)
                 return self.inputs()
-            sig_bit = int(self.master.entry_input("Enter significant bit"))
+            sig_bit = int(self.entry_input("Enter significant bit"))
             plane = int(["Red", "Blue", "Green"].index(
-                self.master.radio_input("Enter Colour Plane", ["Red", "Blue", "Green"])))
+                self.radio_input("Enter Colour Plane", ["Red", "Blue", "Green"])))
         else:
             sig_bit = 7
             plane = 0
@@ -73,7 +78,7 @@ class Main:
 
     def config(self):
         # - Message & image file validation
-        self.master.display("Fetching cover image file directory...")
+        self.display("Fetching cover image file directory...")
         cover_image_path = filedialog.askopenfilename(title="Select cover image file",
                                                       filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"),
                                                                  ("tiff files", "*.tif"), ("gif files", "*.gif"),
@@ -81,7 +86,7 @@ class Main:
         if self.exit_application(cover_image_path):
             return self.config()
 
-        self.master.display("Fetching image file directory...")
+        self.display("Fetching image file directory...")
         image_path = filedialog.askopenfilename(title="Select image file",
                                                 filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"),
                                                            ("tiff files", "*.tif"), ("gif files", "*.gif"),
@@ -90,35 +95,22 @@ class Main:
         if self.exit_application(image_path):
             return self.config()
 
-        try:
-            cover_image = Image.open(cover_image_path)
-            bits = np.unpackbits(np.fromfile(self.image_path, dtype="uint8"))
-            image = ''.join(str(i) for i in list(bits))
-        except OSError:
-            self.error_message(2)
-            return self.config()
-
-        return image, cover_image, image_path, cover_image_path
+        return image_path, cover_image_path
 
     def initialising(self):
-        dimensions = self.cover_image.size
-        pixels = self.cover_image.load()
         cover_size = os.stat(self.cover_image_path).st_size
         image_size = os.stat(self.image_path).st_size
         if image_size > cover_size:
-            self.master.display(
-                "The message binary values exceeds the resolution binary values, therefore will not work. Please try a "
-                "shorter message or larger image.\n")
-        else:
-            return dimensions, pixels
+            return True
+        return False
 
     def file_handle(self):
-        self.master.display("Fetching save path...")
-        save_path = filedialog.asksaveasfilename(defaultextension="*.jpg",
+        self.display("Fetching save path...")
+        save_path = filedialog.asksaveasfilename(defaultextension="*.bmp",
                                                  title="Save image file",
-                                                 filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"),
+                                                 filetypes=(("bitmap files", "*bmp"), ("jpeg files", "*.jpg"),
                                                             ("tiff files", "*.tif"), ("gif files", "*.gif"),
-                                                            ("bitmap files", "*bmp"), ("all files", "*.*")))
+                                                            ("png files", "*.png"), ("all files", "*.*")))
         if self.exit_application(save_path):
             self.file_handle()
         return save_path

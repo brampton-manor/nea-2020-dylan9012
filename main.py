@@ -7,16 +7,28 @@ from tools import msg_embed, msg_extract, img_embed, img_extract
 class MenuBar(tk.Menu):
     def __init__(self, parent):
         tk.Menu.__init__(self, parent)
+        self.master = parent
 
-        embed_submenu = tk.Menu(self, tearoff=0)
-        extract_submenu = tk.Menu(self, tearoff=0)
+        self.embed_menu = tk.Menu(self, tearoff=0)
+        self.extract_menu = tk.Menu(self, tearoff=0)
+        self.exit = None
 
-        embed_submenu.add_command(label="Message", command=lambda: parent.msg_embed())
-        embed_submenu.add_command(label="Image", command=lambda: parent.img_embed())
-        extract_submenu.add_command(label="Message", command=lambda: parent.msg_extract())
-        extract_submenu.add_command(label="Image", command=lambda: parent.img_extract())
-        self.add_cascade(label="Embed", menu=embed_submenu)
-        self.add_cascade(label="Extract", menu=extract_submenu)
+        self.embed_menu.add_command(label="Message", command=lambda: parent.msg_embed())
+        self.extract_menu.add_command(label="Message", command=lambda: parent.msg_extract())
+        self.embed_menu.add_command(label="Image", command=lambda: parent.img_embed())
+        self.extract_menu.add_command(label="Image", command=lambda: parent.img_extract())
+        self.add_cascade(label="Embed", menu=self.embed_menu)
+        self.add_cascade(label="Extract", menu=self.extract_menu)
+
+    def disable(self):
+        for i in range(2):
+            self.embed_menu.entryconfigure(i, state=tk.DISABLED)
+            self.extract_menu.entryconfigure(i, state=tk.DISABLED)
+
+    def enable(self):
+        for i in range(2):
+            self.embed_menu.entryconfigure(i, state=tk.NORMAL)
+            self.extract_menu.entryconfigure(i, state=tk.NORMAL)
 
 
 class RadioBar(tk.Frame):
@@ -44,7 +56,7 @@ class ButtonBar(tk.Frame):
         self.master.button_var.set(1)
 
 
-class Interface(tk.Tk):
+class Interface(tk.Tk, msg_embed.Main, img_embed.Main):
     def __init__(self):
         tk.Tk.__init__(self)
         tk.Tk.protocol(self, "WM_DELETE_WINDOW", self.on_exit)
@@ -58,8 +70,8 @@ class Interface(tk.Tk):
         # Setters for widget creations
 
         self.label()
-        menubar = MenuBar(self)
-        self.config(menu=menubar)
+        self.menubar = MenuBar(self)
+        self.config(menu=self.menubar)
 
     def on_exit(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
@@ -74,16 +86,16 @@ class Interface(tk.Tk):
         label.pack(fill=tk.BOTH, expand=1)
         self.display("Please choose an option from the Toggle menu to continue...")
 
-    def display(self, event):
-        self.screen_var.set(self.screen_var.get() + event + "\n")
+    def display(self, string):
+        self.screen_var.set(self.screen_var.get() + string + "\n")
         tk.Tk.update(self)
 
     def clear_label(self):
         self.screen_var.set("")
         tk.Tk.update(self)
 
-    def entry_input(self, event):
-        self.display(event)
+    def entry_input(self, string):
+        self.display(string)
         text_entry = tk.Entry()
         text_entry.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
         catch = tk.StringVar()
@@ -98,8 +110,8 @@ class Interface(tk.Tk):
         self.clear_label()
         return catch.get()
 
-    def radio_input(self, event, text):
-        self.display(event)
+    def radio_input(self, string, text):
+        self.display(string)
 
         self.button_var = tk.IntVar()
         self.radio_var = tk.IntVar()
@@ -121,16 +133,68 @@ class Interface(tk.Tk):
         return text[self.radio_var.get()]
 
     def msg_embed(self):
-        msg_embed.Main(self)
+        self.clear_label()
+        self.menubar.disable()
+        files = []
+        sig_bit, plane, key = self.inputs()
+        while True:
+            self.message_path, self.image_path = msg_embed.Main.config(self)
+            if msg_embed.Main.initialising(self):
+                messagebox.showinfo('Return', "The message binary values exceeds the resolution binary values "
+                                              "therefore will not work. Please try a shorter message or larger image.")
+                continue
+            save_path = self.file_handle()
+            files.append([self.message_path, self.image_path, save_path])
+            msg_box = messagebox.askquestion('Processing', 'Add more files to embed?', icon='warning')
+            if msg_box == 'no':
+                break
+            else:
+                messagebox.showinfo('Return', 'Adding more files')
+            self.clear_label()
+        while files:
+            paths = files.pop(-1)
+            msg_embed.Main(sig_bit, plane, key, paths[0], paths[1], paths[2])
+        self.clear_label()
+        self.display("ALL DONE")
+        self.menubar.enable()
 
     def msg_extract(self):
+        self.clear_label()
+        self.menubar.disable()
         msg_extract.Main(self)
+        self.menubar.enable()
 
     def img_embed(self):
-        img_embed.Main(self)
+        self.clear_label()
+        self.menubar.disable()
+        files = []
+        sig_bit, plane, key = self.inputs()
+        while True:
+            self.image_path, self.cover_image_path = img_embed.Main.config(self)
+            if img_embed.Main.initialising(self):
+                messagebox.showinfo('Return', "The message binary values exceeds the resolution binary values "
+                                              "therefore will not work. Please try a shorter message or larger image.")
+                continue
+            save_path = self.file_handle()
+            files.append([self.image_path, self.cover_image_path, save_path])
+            msg_box = messagebox.askquestion('Processing', 'Add more files to embed?', icon='warning')
+            if msg_box == 'no':
+                break
+            else:
+                messagebox.showinfo('Return', 'Adding more files')
+            self.clear_label()
+        while files:
+            paths = files.pop(-1)
+            img_embed.Main(sig_bit, plane, key, paths[0], paths[1], paths[2])
+        self.clear_label()
+        self.display("ALL DONE")
+        self.menubar.enable()
 
     def img_extract(self):
+        self.clear_label()
+        self.menubar.disable()
         img_extract.Main(self)
+        self.menubar.enable()
 
 
 # TODO: Do the queue system

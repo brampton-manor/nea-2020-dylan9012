@@ -134,7 +134,7 @@ class Main:
 
         # file-type validation
         file_type = self.extracted_img[index - 3 * 8:index]
-        if ''.join(chr(int(type[i:i + 8], 2)) for i in range(0, len(file_type), 8)) == self.file_type:
+        if ''.join(chr(int(file_type[i:i + 8], 2)) for i in range(0, len(file_type), 8)) == self.file_type:
             return self.extracted_img.replace(self.extracted_img[index - 3 * 8:index + 17 * 8], '')
         else:
             return self.watermark(i+1)
