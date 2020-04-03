@@ -49,25 +49,6 @@ class Main:
         self.master.display("Error {number}: {case}".format(number=case, case=switch.get(case)))
         self.master.display("\n", "-" * 100, "\n")
 
-    def settings(self):
-        choice = self.master.radio_input("Customised embedding?", ["Yes", "No"])
-        if choice == "Yes":
-            while True:
-                try:
-                    key = int(self.master.entry_input("Please enter numerical key"))
-                    break
-                except ValueError:
-                    self.error_message(1)
-            sig_bit = int(
-                self.master.entry_input("Enter significant bit (0 - for low quality to 7 - for high quality)"))
-            plane = int(["Red", "Blue", "Green"].index(
-                self.master.radio_input("Enter Colour Plane", ["Red", "Blue", "Green"])))
-        else:
-            sig_bit = 7
-            plane = 0
-            key = 0
-        return sig_bit, plane, key
-
     def config(self):
         # - Image file validation
         image_path = filedialog.askopenfilename(parent=self.master, title="Select image file",
