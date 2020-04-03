@@ -7,17 +7,21 @@ from PIL import Image
 
 
 class Main:
-    def __init__(self, parent):
+    def __init__(self, parent, settings):
         self.master = parent
+        self.master.menubar.disable()
         # - Optional configurations
-        self.sig_bit, self.plane, self.key = self.settings()
+        self.sig_bit, self.plane, self.key = settings
         # - User inputs, and extracting image information
         self.cover_image, self.image_path, self.file_type, self.dimensions, self.pixels = self.config()
         # - Pixel embedding order
-        shuffled_indices = self.ordering()
-        # - Extraction
+        self.shuffled_indices = self.ordering()
+        self.extracted_img = None
+        self.image_bits = None
+
+    def extract(self):
         extracted_bits = ""
-        for i in shuffled_indices:
+        for i in self.shuffled_indices:
             x = i % self.dimensions[0]
             y = i // self.dimensions[0]
             p = format(self.pixels[x, y][self.plane], 'b').zfill(8)
@@ -32,9 +36,8 @@ class Main:
         else:
             # - File handling
             self.file_handle()
-            self.master.display("\n")
             self.master.display("ALL DONE")
-            self.master.display("\n")
+            self.master.menubar.enable()
 
     def error_message(self, case):
         switch = {

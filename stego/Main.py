@@ -1,4 +1,5 @@
 import os
+import time
 import tkinter as tk
 from tkinter import messagebox, filedialog
 
@@ -11,16 +12,17 @@ import msg_extract
 class MenuBar(tk.Menu):
     def __init__(self, parent):
         tk.Menu.__init__(self, parent)
-        self.master = parent
-
         self.embed_menu = tk.Menu(self, tearoff=0)
         self.extract_menu = tk.Menu(self, tearoff=0)
-        self.exit = None
 
-        self.embed_menu.add_command(label="Message", command=lambda: parent.msg_embed())
-        self.extract_menu.add_command(label="Message", command=lambda: parent.msg_extract())
-        self.embed_menu.add_command(label="Image", command=lambda: parent.img_embed())
-        self.extract_menu.add_command(label="Image", command=lambda: parent.img_extract())
+        self.embed_menu.add_command(label="Message", command=lambda: parent.choose_msg_embed())
+        self.extract_menu.add_command(label="Message",
+                                      command=lambda: parent.choose_extract(
+                                          msg_extract.Main(parent, parent.settings())))
+        self.embed_menu.add_command(label="Image", command=lambda: parent.choose_img_embed())
+        self.extract_menu.add_command(label="Image",
+                                      command=lambda: parent.choose_extract(
+                                          img_extract.Main(parent, parent.settings())))
         self.add_cascade(label="Embed", menu=self.embed_menu)
         self.add_cascade(label="Extract", menu=self.extract_menu)
 
@@ -77,6 +79,14 @@ class Interface(tk.Tk):
         self.menubar = MenuBar(self)
         self.config(menu=self.menubar)
 
+    def startup_msg(self):
+        self.clear_label()
+        self.display("Please choose an option from the menu to continue...", "\n",
+                     "Go to embed > message to embed a message inside an image", "\n",
+                     "Go to embed > image to embed an image inside an image", "\n",
+                     "Go to extract > message to extract a message from an image", "\n",
+                     "Go to extract > message to extract an image from an image", "\n")
+
     def on_exit(self):
         if tk.messagebox.askokcancel("Quit", "Do you want to quit?"):
             tk.Tk.destroy(self)
@@ -88,7 +98,7 @@ class Interface(tk.Tk):
                          anchor=tk.NW)
         label.config(state=tk.NORMAL, bg="black", fg="#42f545", font="ansifixed")
         label.pack(fill=tk.BOTH, expand=1)
-        self.display("Please choose an option from the Toggle menu to continue...")
+        self.startup_msg()
 
     def display(self, *argv):
         for i in argv:
@@ -169,14 +179,15 @@ class Interface(tk.Tk):
 
     def file_handle(self):
         save_path = tk.filedialog.asksaveasfilename(parent=self, title="Save image to directory",
+                                                    defaultextension="*.gif",
                                                     filetypes=(("gif files", "*.gif"), ("png files", "*.png"),
                                                                ("tiff files", "*.tif"), ("jpeg files", "*.jpg"),
-                                                               ("bitmap files", "*bmp"), ("all files", "*.*")))
+                                                               ("bitmap files", "*.bmp"), ("all files", "*.*")))
         if self.exit_application(save_path):
             self.file_handle()
         return save_path
 
-    def msg_embed(self):
+    def choose_msg_embed(self):
         self.clear_label()
         self.menubar.disable()
         files = []
@@ -191,7 +202,7 @@ class Interface(tk.Tk):
                                                        filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png"),
                                                                   ("tiff files", "*.tif"), ("gif files", "*.gif"),
                                                                   ("bitmap files", "*.bmp"), ("pdf files", "*.pdf"),
-                                                                  ("all files", "*.*")))
+                                                                  ))
 
             if self.exit_application(image_path):
                 continue
@@ -219,8 +230,10 @@ class Interface(tk.Tk):
         self.clear_label()
         self.display("ALL DONE")
         self.menubar.enable()
+        time.sleep(3)
+        self.startup_msg()
 
-    def img_embed(self):
+    def choose_img_embed(self):
         self.clear_label()
         self.menubar.disable()
         files = []
@@ -246,7 +259,7 @@ class Interface(tk.Tk):
             cover_size = os.stat(cover_image_path).st_size
             image_size = os.stat(image_path).st_size
             if image_size > cover_size:
-                tk.messagebox.showinfo('Return', "The message binary values exceeds the resolution binary values "
+                tk.messagebox.showinfo('Return', "The insert image pixels exceed the cover image pixels "
                                                  "therefore will not work. Please try a shorter message or larger "
                                                  "image.")
                 continue
@@ -264,18 +277,16 @@ class Interface(tk.Tk):
         self.clear_label()
         self.display("ALL DONE")
         self.menubar.enable()
+        time.sleep(3)
+        self.startup_msg()
 
-    def msg_extract(self):
+    def choose_extract(self, obj):
         self.clear_label()
         self.menubar.disable()
-        msg_extract.Main(self)
+        obj.extract()
         self.menubar.enable()
-
-    def img_extract(self):
-        self.clear_label()
-        self.menubar.disable()
-        img_extract.Main(self)
-        self.menubar.enable()
+        time.sleep(3)
+        self.startup_msg()
 
 
 if __name__ == "__main__":
