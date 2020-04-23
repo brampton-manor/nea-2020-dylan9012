@@ -1,3 +1,5 @@
+# img_extract.py
+
 import os
 from datetime import datetime
 from tkinter import filedialog

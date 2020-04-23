@@ -1,8 +1,12 @@
+#  main.py
+
 import os
 import random
 import time
 import tkinter as tk
 from tkinter import messagebox, filedialog
+
+from PIL import Image
 
 from stego.img_embed import ImgEmbed
 from stego.img_extract import ImgExtract
@@ -19,10 +23,10 @@ class MenuBar(tk.Menu):
         self.exit.add_command(label="Close application", command=parent.on_exit)
         self.embed_menu.add_command(label="Message", command=lambda: parent.queue.choose_msg_embed())
         self.extract_menu.add_command(label="Message", command=lambda: parent.queue.choose_extract(
-            MsgExtract(parent, parent.queue.settings(), parent.queue.open_files(''))))
+            MsgExtract(parent, parent.queue.settings(), parent.queue.open_files(0))))
         self.embed_menu.add_command(label="Image", command=lambda: parent.queue.choose_img_embed())
         self.extract_menu.add_command(label="Image", command=lambda: parent.queue.choose_extract(
-            ImgExtract(parent, parent.queue.settings(), parent.queue.open_files(''))))
+            ImgExtract(parent, parent.queue.settings(), parent.queue.open_files(0))))
         self.add_cascade(label="Embed", menu=self.embed_menu)
         self.add_cascade(label="Extract", menu=self.extract_menu)
         self.add_cascade(label="Exit", menu=self.exit)
@@ -194,12 +198,12 @@ class Queue:
         sig_bit, plane, key = self.settings()
         while True:
             cover_image_path, data_path = self.open_files(mode)
-            message = open(data_path, 'r', encoding="ISO-8859-1").read()
             cover_size = os.stat(cover_image_path).st_size * 8
-            message_bits = len(message) + 7 * 14
-            if cover_size > message_bits:
-                tk.messagebox.showinfo('Return', "The message size exceeds the cover image size therefore will not "
-                                                 "work. Please try a shorter message or larger image.")
+            message_size = os.stat(data_path).st_size * 7
+            if cover_size < message_size:
+                tk.messagebox.showinfo('Invalid combination',
+                                       "The message size exceeds the cover image size therefore will not "
+                                       "work. Please try a shorter message or larger image.")
                 continue
             if not self.add_files(files, data_path, cover_image_path):
                 break
@@ -213,21 +217,23 @@ class Queue:
         sig_bit, plane, key = self.settings()
         while True:
             cover_image_path, data_path = self.open_files(mode)
-            cover_size = os.stat(cover_image_path).st_size
+            width, height = Image.open(cover_image_path).size
+            pixels = width * height
             image_size = os.stat(data_path).st_size + 100
-            if cover_size < image_size:
-                tk.messagebox.showinfo('Return', "The data image size exceeds the cover image size therefore will not "
-                                                 "work. Please try a shorter message or larger. Please try a smaller "
-                                                 "data image or larger cover image.")
+            if pixels < image_size:
+                tk.messagebox.showinfo('Invalid combination',
+                                       "The data image size exceeds the cover image size therefore will not "
+                                       "work. Please try a shorter message or larger. Please try a smaller "
+                                       "data image or larger cover image.")
                 continue
             if not self.add_files(files, data_path, cover_image_path):
                 break
             self.master.clear_label()
         self.process_files(files, sig_bit, plane, key, mode)
 
-    def choose_extract(self, extractor):
+    def choose_extract(self, extract_obj):
         self.master.clear_label()
-        ToolsLink(self.master).extract(extractor)
+        ToolsLink(self.master).extract(extract_obj)
         time.sleep(3)
         self.master.display("ALL DONE")
         self.master.menubar.enable()
