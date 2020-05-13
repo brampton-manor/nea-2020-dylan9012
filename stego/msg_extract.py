@@ -37,8 +37,10 @@ class MsgExtract:
     def file_handle(self):
         save_path = False
         while not save_path:
-            save_path = filedialog.asksaveasfilename(parent=self.master, title="Save text file to directory",
-                                                     defaultextension="*.txt")
+            save_path = filedialog.asksaveasfilename(
+                parent=self.master,
+                title="Save text file to directory",
+                defaultextension="*.txt")
             if self.master.queue.path_validation(save_path, 't'):
                 save_path = False
         file = open(save_path, "w+")

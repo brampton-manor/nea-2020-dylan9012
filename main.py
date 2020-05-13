@@ -21,10 +21,12 @@ class MenuBar(tk.Menu):
         self.extract_menu = tk.Menu(self, tearoff=tk.NO)
         self.exit = tk.Menu(self, tearoff=tk.NO)
         self.exit.add_command(label="Close application", command=parent.on_exit)
-        self.embed_menu.add_command(label="Message", command=lambda: parent.queue.choose_msg_embed())
+        self.embed_menu.add_command(
+            label="Message", command=lambda: parent.queue.choose_msg_embed())
         self.extract_menu.add_command(label="Message", command=lambda: parent.queue.choose_extract(
             MsgExtract(parent, parent.queue.settings(), parent.queue.open_files(0))))
-        self.embed_menu.add_command(label="Image", command=lambda: parent.queue.choose_img_embed())
+        self.embed_menu.add_command(
+            label="Image", command=lambda: parent.queue.choose_img_embed())
         self.extract_menu.add_command(label="Image", command=lambda: parent.queue.choose_extract(
             ImgExtract(parent, parent.queue.settings(), parent.queue.open_files(0))))
         self.add_cascade(label="Embed", menu=self.embed_menu)
@@ -49,10 +51,27 @@ class ButtonBar(tk.Frame):
         self.text = text
         self.height = height
         self.width = width
-        tk.Button(self, text=self.text, height=self.height, width=self.width, command=self.trigger).pack()
+        tk.Button(
+            self,
+            text=self.text,
+            height=self.height,
+            width=self.width,
+            command=self.trigger).pack()
 
     def trigger(self):
         self.master.button_var.set(True)
+
+
+class EntryBar(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.master = parent
+        self.text_entry = tk.Entry(self)
+        self.text_entry.bind("<Return>", (lambda _: self.callback(self.master.entry_var)))
+        self.text_entry.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
+
+    def callback(self, event):
+        event.set(self.text_entry.get())
 
 
 class ToolsLink:
@@ -66,16 +85,15 @@ class ToolsLink:
             y = shuffled_indices[bit] // this.width
             p = format(this.pixels[x, y][this.plane], 'b').zfill(8)
 
-            if p[this.sig_bit] == "0":
-                if this.final_bits[bit] == "1":
-                    this.pixels[x, y] = self.modify_pixel(this, this.pixels[x, y], 1)
+            if p[this.sig_bit] == '0' and this.final_bits[bit] == '1':
+                this.pixels[x, y] = self.modify_pixel(this, this.pixels[x, y], 1)
 
-            elif this.final_bits[bit] == "0":
+            elif this.final_bits[bit] == '0':
                 this.pixels[x, y] = self.modify_pixel(this, this.pixels[x, y], 0)
-        if os.path.splitext(this.save_path)[1].find('tif'):
-            this.cover_image.save(this.save_path, format='tiff', compression='None')
+        if os.path.splitext(this.save_path)[1].find("tif"):
+            this.cover_image.save(this.save_path, format="tiff", compression="None")
         else:
-            this.cover_image.save(this.save_path, compression='None')
+            this.cover_image.save(this.save_path, compression="None")
 
     def extract(self, this):
         shuffled_indices = self.ordering(this)
@@ -88,7 +106,10 @@ class ToolsLink:
         this.secret_data = this.conversion(extracted_bits)
         this.removed_watermark = this.watermark()
         if not this.removed_watermark:
-            tk.messagebox.showinfo("Invalid cover image", "Watermark not present in image, please try another image")
+            tk.messagebox.showinfo(
+                "Invalid settings",
+                "Watermark not detected in image, please enter correct settings or try another cover image"
+            )
         else:
             this.file_handle()
 
@@ -111,7 +132,9 @@ class ToolsLink:
 class Queue:
     def __init__(self, parent):
         self.master = parent
-        self.supported_image_types = {".gif", ".png", ".jpg", ".pdf", ".bmp", ".tif", ".tiff"}
+        self.supported_image_types = {
+            ".gif", ".png", ".jpg", ".pdf", ".bmp", ".tif", ".tiff"
+        }
         self.supported_text_types = {".txt", ".rtf"}
 
     def settings(self):
@@ -125,7 +148,8 @@ class Queue:
                 except ValueError:
                     self.master.display("Error: Input not numerical", "\n")
             sig_bit = int(
-                self.master.scale_input("Enter significant bit (0 - for low quality to 7 - for high quality)"))
+                self.master.scale_input(
+                    "Enter significant bit (0 - for low quality to 7 - for high quality)"))
             plane = int(["Red", "Blue", "Green"].index(
                 self.master.radio_input("Enter Colour Plane", ["Red", "Blue", "Green"])))
         else:
@@ -135,26 +159,32 @@ class Queue:
         return sig_bit, plane, key
 
     def path_validation(self, file, mode):
-        if (os.path.splitext(file)[1] not in self.supported_image_types and mode == 'i') or (
-                os.path.splitext(file)[1] not in self.supported_text_types and mode == 't'):
-            tk.messagebox.showinfo('Illegal file', 'Please choose a supported file type and valid name')
+        if (os.path.splitext(file)[1] not in self.supported_image_types and
+            mode == 'i') or (
+                os.path.splitext(file)[1] not in self.supported_text_types and
+                mode == 't'):
+            tk.messagebox.showinfo("Illegal file",
+                                   "Please choose a supported file type and valid name")
             return True
         else:
             return False
 
     def file_handle(self):
-        save_path = ''
-        while save_path == '':
-            save_path = tk.filedialog.asksaveasfilename(parent=self.master, title="Save cover image to directory",
-                                                        defaultextension="*.gif")
+        save_path = False
+        while not save_path:
+            save_path = tk.filedialog.asksaveasfilename(
+                parent=self.master,
+                title="Save cover image to directory",
+                defaultextension="*.gif")
             if self.path_validation(save_path, 'i'):
-                save_path = ''
+                save_path = False
         return save_path
 
     def add_files(self, files, data_path, image_path):
         save_path = self.file_handle()
         files.append([data_path, image_path, save_path])
-        msg_box = tk.messagebox.askquestion('Processing', 'Add more files to embed?', icon='warning')
+        msg_box = tk.messagebox.askquestion(
+            "Processing", 'Add more files to embed?', icon='warning')
         if msg_box == 'no':
             return False
         else:
@@ -164,12 +194,14 @@ class Queue:
     def open_files(self, mode):
         cover_image_path, data_path = False, False
         while not (cover_image_path and data_path):
-            cover_image_path = tk.filedialog.askopenfilename(parent=self.master, title="Select cover image file")
+            cover_image_path = tk.filedialog.askopenfilename(
+                parent=self.master, title="Select cover image file")
             if self.path_validation(cover_image_path, 'i'):
                 cover_image_path = False
                 continue
             if mode:
-                data_path = tk.filedialog.askopenfilename(parent=self.master, title="Select media to embed")
+                data_path = tk.filedialog.askopenfilename(
+                    parent=self.master, title="Select media to embed")
                 if self.path_validation(data_path, mode):
                     data_path = False
                     continue
@@ -201,9 +233,10 @@ class Queue:
             cover_size = os.stat(cover_image_path).st_size * 8
             message_size = os.stat(data_path).st_size * 7
             if cover_size < message_size:
-                tk.messagebox.showinfo('Invalid combination',
-                                       "The message size exceeds the cover image size therefore will not "
-                                       "work. Please try a shorter message or larger image.")
+                tk.messagebox.showinfo(
+                    'Invalid combination',
+                    "The message size exceeds the cover image size therefore will not "
+                    "work. Please try a shorter message or larger image.")
                 continue
             if not self.add_files(files, data_path, cover_image_path):
                 break
@@ -221,10 +254,11 @@ class Queue:
             pixels = width * height
             image_size = os.stat(data_path).st_size + 100
             if pixels < image_size:
-                tk.messagebox.showinfo('Invalid combination',
-                                       "The data image size exceeds the cover image size therefore will not "
-                                       "work. Please try a shorter message or larger. Please try a smaller "
-                                       "data image or larger cover image.")
+                tk.messagebox.showinfo(
+                    "Invalid combination",
+                    "The data image size exceeds the cover image size therefore will not "
+                    "work. Please try a shorter message or larger. Please try a smaller "
+                    "data image or larger cover image.")
                 continue
             if not self.add_files(files, data_path, cover_image_path):
                 break
@@ -250,6 +284,7 @@ class Interface(tk.Tk):
         self.button_var = None
         self.radio_var = None
         self.scale_var = None
+        self.entry_var = None
         self.radios = None
         self.label()
         self.queue = Queue(self)
@@ -258,11 +293,12 @@ class Interface(tk.Tk):
 
     def startup_msg(self):
         self.clear_label()
-        self.display("Please choose an option from the menu to continue...", "\n\n",
-                     "Go to embed > message to embed a message inside an image", "\n",
-                     "Go to embed > image to embed an image inside an image", "\n",
-                     "Go to extract > message to extract a message from an image", "\n",
-                     "Go to extract > message to extract an image from an image", "\n")
+        self.display(
+            "Please choose an option from the menu to continue...", "\n\n",
+            "Go to embed > message to embed a message inside an image", "\n",
+            "Go to embed > image to embed an image inside an image", "\n",
+            "Go to extract > message to extract a message from an image", "\n",
+            "Go to extract > message to extract an image from an image", "\n")
 
     def on_exit(self):
         if tk.messagebox.askokcancel("Quit", "Are you sure you want to quit?"):
@@ -270,8 +306,14 @@ class Interface(tk.Tk):
 
     def label(self):
         self.screen_var = tk.StringVar()
-        label = tk.Label(justify=tk.LEFT, relief=tk.RIDGE, textvariable=self.screen_var, width=300, height=5,
-                         anchor=tk.NW, borderwidth=3)
+        label = tk.Label(
+            justify=tk.LEFT,
+            relief=tk.RIDGE,
+            textvariable=self.screen_var,
+            width=300,
+            height=5,
+            anchor=tk.NW,
+            borderwidth=3)
         label.config(state=tk.NORMAL, bg="black", fg="#42f545", font="ansifixed")
         label.pack(fill=tk.BOTH, expand=tk.YES)
         self.startup_msg()
@@ -288,27 +330,27 @@ class Interface(tk.Tk):
 
     def entry_input(self, string):
         self.display(string)
-        catch = tk.StringVar()
-
-        def callback(event):
-            event.set(text_entry.get())
-
-        text_entry = tk.Entry(self)
-        text_entry.bind('<Return>', (lambda _: callback(catch)))
-        text_entry.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
-
-        text_entry.wait_variable(catch)
-        text_entry.destroy()
+        self.entry_var = tk.StringVar()
+        entry_bar = EntryBar(self)
+        entry_bar.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
+        entry_bar.wait_variable(self.entry_var)
+        entry_bar.destroy()
         self.clear_label()
-        return catch.get()
+        return self.entry_var.get()
 
     def radio_input(self, string, text):
         self.display(string)
         self.button_var = tk.BooleanVar()
         radio_var = tk.IntVar()
         self.radios = [
-            tk.Radiobutton(self, text=option, variable=radio_var, value=text.index(option), height=2, width=15) for
-            option in text]
+            tk.Radiobutton(
+                self,
+                text=option,
+                variable=radio_var,
+                value=text.index(option),
+                height=2,
+                width=15) for option in text
+        ]
         for radio in self.radios:
             radio.pack(side=tk.LEFT, expand=tk.YES)
         confirm = ButtonBar(self, "Confirm")
@@ -323,8 +365,15 @@ class Interface(tk.Tk):
     def scale_input(self, string):
         self.display(string)
         scale_var = tk.IntVar()
-        scale = tk.Scale(self, from_=0, to=7, variable=scale_var, orient=tk.HORIZONTAL, length=450, cursor="hand",
-                         label="Slide to significant bit")
+        scale = tk.Scale(
+            self,
+            from_=0,
+            to=7,
+            variable=scale_var,
+            orient=tk.HORIZONTAL,
+            length=450,
+            cursor="hand",
+            label="Slide to significant bit")
         confirm = ButtonBar(self, "Confirm")
         scale.pack(side=tk.LEFT)
         confirm.pack(side=tk.RIGHT)
