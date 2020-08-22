@@ -1,3 +1,5 @@
+[![Run on Repl.it](https://repl.it/badge/github/dylan9012/crypto-stego-project)](https://repl.it/github/dylan9012/crypto-stego-project)
+
 ## Project background
 When learning about cryptography in A Level Computer Science, I came across steganography in relation to hiding data. To make steganography more secure, I researched ways of using cryptography and steganography in combination to improve the aim of hiding media (e.g. a message) inside an image. My method of attaining this combination is to use a randomly shuffled least significant bit steganography algorithm to scatter data onto the cover image to become untraceable. With this combination, I feel there will be a greater chance that eavesdroppers will not be able to recover the media and aid encryption.
 
