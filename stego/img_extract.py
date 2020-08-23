@@ -30,7 +30,7 @@ class ImgExtract:
             save_path = filedialog.asksaveasfilename(
                 parent=self.master,
                 title="Save image to directory",
-                defaultextension="*.gif")
+                filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*")))
             if self.master.queue.path_validation(save_path, 'i'):
                 save_path = False
 
