@@ -40,7 +40,7 @@ class MsgExtract:
             save_path = filedialog.asksaveasfilename(
                 parent=self.master,
                 title="Save text file to directory",
-                defaultextension="*.txt")
+                filetypes=(("txt files", "*.txt"), ("all files", "*.*")))
             if self.master.queue.path_validation(save_path, 't'):
                 save_path = False
         file = open(save_path, "w+")

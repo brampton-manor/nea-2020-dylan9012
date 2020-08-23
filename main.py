@@ -175,7 +175,7 @@ class Queue:
             save_path = tk.filedialog.asksaveasfilename(
                 parent=self.master,
                 title="Save cover image to directory",
-                defaultextension="*.gif")
+								filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*")))
             if self.path_validation(save_path, 'i'):
                 save_path = False
         return save_path
@@ -372,7 +372,6 @@ class Interface(tk.Tk):
             variable=scale_var,
             orient=tk.HORIZONTAL,
             length=450,
-            cursor="hand",
             label="Slide to significant bit")
         confirm = ButtonBar(self, "Confirm")
         scale.pack(side=tk.LEFT)
