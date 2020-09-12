@@ -212,7 +212,7 @@ class Queue:
 
     def process_files(self, files, sig_bit, plane, key, mode):
         while files:
-            paths = files.pop(-1)
+            paths = files.pop()
             if mode == 't':
                 MsgEmbed(sig_bit, plane, key, paths, ToolsLink(self.master))
             else:
