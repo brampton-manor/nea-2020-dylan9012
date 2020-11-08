@@ -24,6 +24,7 @@ Objective one – Main interface:<br />
 •	Display radio buttons for user input<br />  
 •	Implement queue for multiple files to embed
 
+
 Objective two – Main program:<br />  
 •	Exception handling and prompts to validate inputs<br />  
 •	Add option to extract media from cover image<br />  
