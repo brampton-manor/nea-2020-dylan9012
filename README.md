@@ -16,19 +16,19 @@ A Comparative Study of Recent Steganography Techniques for Multiple Image Format
 Brain Oakley’s answer to: [Best way to structure a tkinter application?](https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application)
 
 ## Objectives
-Objective one – Main interface:
-•	Functional message box to output strings
-•	Menu bar for user to choose option 
-•	File browsing to select media to input
-•	Display entry box for user input
-•	Display radio buttons for user input
+Objective one – Main interface:  
+•	Functional message box to output strings  
+•	Menu bar for user to choose option  
+•	File browsing to select media to input  
+•	Display entry box for user input  
+•	Display radio buttons for user input  
 •	Implement queue for multiple files to embed
 
-Objective two – Main program:
-•	Exception handling and prompts to validate inputs
-•	Add option to extract media from cover image
-•	Add option to embed image into cover image
-•	Watermark cover image to detect if media can be extracted.
+Objective two – Main program:  
+•	Exception handling and prompts to validate inputs  
+•	Add option to extract media from cover image  
+•	Add option to embed image into cover image  
+•	Watermark cover image to detect if media can be extracted.  
 •	Add compatibility for popular image formats {.jpg, .gif, .png, .tif, .pdf, .bmp}
 
 
